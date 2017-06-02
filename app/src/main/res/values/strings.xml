@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">认证检查员</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tab1">项目</string>
+    <string name="tab2">合同</string>
+    <string name="tab3">我的</string>
+
+
+    <string name="Input_useracc">请输入账号</string>
+    <string name="Input_password">请输入密码</string>
+    <string name="login">登 录</string>
+
+
+    <string name="my_update_text">版本更新</string>
+    <string name="my_memo_text">备忘录</string>
+    <string name="my_clear_text">清除缓存</string>
+    <string name="my_about_text">关于我们</string>
+    <string name="my_setting_text">设置</string>
+    <string name="my_out_text">退出</string>
+    <string name="string_test">请输入。。。</string>
+
+    <string name="connect_name">连接名</string>
+    <string name="server_IP">服务器</string>
+    <string name="port">端口</string>
+    <string name="ok">确 定</string>
+    <string name="sreach">搜 索</string>
+
+    <string name="task_info">任务信息</string>
+    <string name="com_info">公司信息</string>
+    <string name="info_download">资料下载查看</string>
+    <string name="info_get">资料收集</string>
+    <string name="info_get1">实地报告</string>
+    <string name="info_get2">实地图片</string>
+    <string name="info_get3">已有检测报告</string>
+    <string name="info_memo">备注</string>
+    <string name="save">上 传</string>
+    <string name="con">联系人:</string>
+    <string name="about_main_text">
+        中华全国供销合作总社北京商业机械研究所于1978年经国务院国科发字［1978］356号文批准成立，位于北京市丰台区总部基地，是直属于中华全国供销合作总社的国家级科研院所，下属单位有北京中合金诺认证中心有限公司和北京中合智盛有限公司。
+        北京商业机械研究所围绕“农产品标准化”和“农产品信息追溯”应用中的关键性技术问题，致力于开发一套符合农产品标准与信息查询服务的系统平台，以信息化与互联网技术推动供销合作社传统业务的“智慧化”升级,
+        力求突出特色，推动“透明云农场”在供销合作社业务领域的应用。有效提高供销合作社为农服务的规模、质量与效率。
+
+    </string>
+
+    <string name="about_com_addr">地址:</string>
+    <string name="about_com_tel">联系电话:</string>
+    <string name="about_com_phone">手机:</string>
+    <string name="about_item_web_url">项目网址:</string>
+    <string name="about_wechar">微信公众号:</string>
+    <string name="about_email">邮箱:</string>
+
+    <string name="about_com_name_info">中华全国供销合作社北京商业机械研究所</string>
+    <string name="about_com_addr_info">北京市丰台区南四环西路188号十六区3号楼</string>
+    <string name="about_com_tel_info">010-63611240</string>
+    <string name="about_com_phone_info">186-1005-6339</string>
+    <string name="about_item_web_url_info">http://www.tyunfarm.com</string>
+    <string name="about_wechar_info">透明云</string>
+    <string name="about_email_info">18610056339@163.com</string>
+
+    <!--<string name="main_home_text">首页</string>-->
+    <!--<string name="main_mine_text">收藏</string>-->
+    <!--<string name="main_attention_text">关注</string>-->
+
+    <array name="home_video_tab">
+        <item>待完善@dream@0</item>
+        <!--<item>待上传@dream@1</item>-->
+        <item>已上传@dream@1</item>
+    </array>
+
+    <!--<array name="newpost_video_tab">-->
+    <!--<item>美女@dream@0</item>-->
+    <!--<item>搞笑@dream@1</item>-->
+    <!--<item>视频@dream@2</item>-->
+    <!--<item>段子@dream@3</item>-->
+    <!--<item>城市@dream@4</item>-->
+    <!--<item>农村@dream@5</item>-->
+    <!--<item>青春@dream@6</item>-->
+    <!--</array>-->
+
+    <!--<array name="attention_video_tab">-->
+    <!--<item>订阅@dream@0</item>-->
+    <!--<item>关注@dream@1</item>-->
+    <!--</array>-->
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_pact">PactActivity</string>
+    <string name="title_activity_my">MyActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_loading">LoadingActivity</string>
+
+    <string name="clear">清除缓存</string>
+    <string name="about">关于我们</string>
+    <string name="out">退出</string>
+    <string name="upload">上 传</string>
+    <string name="title_main">合同</string>
+
+    <string name="pact_no">2014109862436348723590</string>
+    <string name="pact_start_date">2017.06.17</string>
+    <string name="pact_end_date">2017.08.17</string>
+    <string name="com_name">本华宇安</string>
+    <string name="com_addr">湖南 石家庄 华宇大厦</string>
+    <string name="com_tel">06153277</string>
+    <string name="com_con_name">安师大</string>
+    <string name="com_con_tel">182573016283</string>
+    <string name="com_con_ide">经理</string>
+    <string name="date_biao">-</string>
+</resources>
