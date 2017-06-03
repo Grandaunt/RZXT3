@@ -21,4 +21,14 @@
     <color name="gray2">#222</color>
     <color name="gray1">#111</color>
     <color name="black">#000</color>
+
+    <color name="greenf">#c0ebd7</color>
+    <color name="greene">#a4e2c6</color>
+    <color name="greend">#7fecad</color>
+    <color name="greenc">#7bcfa6</color>
+    <color name="greenb">#3de1ad</color>
+    <color name="greena">#33FF99</color>
+    <color name="green9">#00FF99</color>
+    <color name="green8">#66FFCC</color>
+
 </resources>

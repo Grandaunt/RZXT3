@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import com.sjs.dz.rzxt3.Adapter.MyFragmentAdapter;
 import com.sjs.dz.rzxt3.DB.PactInfo;
@@ -33,12 +34,16 @@ import org.xutils.x;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.relex.circleindicator.CircleIndicator;
+
 public class MyActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,ViewPager.OnPageChangeListener , ViewFragment.OnFragmentInteractionListener {
     private String TAG = this.getClass().getSimpleName();
     private DbManager db;
     private MyApplication myApplication;
     private ViewPager viewPager;
+    private  CircleIndicator indicator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +69,10 @@ public class MyActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         viewPager=(ViewPager) findViewById(R.id.viewpager);
+        //指示器
+        indicator = (CircleIndicator) findViewById(R.id.indicator);
+
+
         //初始化数据
         initData();
 
@@ -97,10 +106,13 @@ public class MyActivity extends AppCompatActivity
             list.add(fragment0);
         }
 
+
 //        viewPager.addOnPageChangeListener((ViewPager.OnPageChangeListener) this);//设置页面切换时的监听器(可选，用了之后要重写它的回调方法处理页面切换时候的事务)
         viewPager.setAdapter(new MyFragmentAdapter(getSupportFragmentManager(), list));
+        indicator.setViewPager(viewPager);
         //页面切换动画
         viewPager.setPageTransformer(true, new DepthPageTransformer());
+
     }
 
     @Override
