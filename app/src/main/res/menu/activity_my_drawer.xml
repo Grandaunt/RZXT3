@@ -2,36 +2,45 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
+        <!--<item-->
+            <!--android:id="@+id/nav_upload"-->
+            <!--android:icon="@drawable/ic_menu_camera"-->
+            <!--android:title="@string/upload"-->
+            <!--/>-->
+        <item
+        android:id="@+id/nav_upload"
+        android:icon="@mipmap/ic_upload"
+        android:title="@string/upload1"
+        />
+        <item
+            android:id="@+id/nav_down"
+            android:icon="@mipmap/ic_down"
+            android:title="@string/down" />
         <item
             android:id="@+id/nav_clear"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/clear"
-            />
-        <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/about" />
-        <item
-            android:id="@+id/nav_out"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/out" />
+            android:icon="@mipmap/ic_clear"
+            android:title="@string/clear" />
         <!--<item-->
             <!--android:id="@+id/nav_manage"-->
             <!--android:icon="@drawable/ic_menu_manage"-->
             <!--android:title="Tools" />-->
     </group>
 
-    <!--<item android:title="Communicate">-->
-        <!--<menu>-->
-            <!--<item-->
-                <!--android:id="@+id/nav_share"-->
-                <!--android:icon="@drawable/ic_menu_share"-->
-                <!--android:title="Share" />-->
-            <!--<item-->
-                <!--android:id="@+id/nav_send"-->
-                <!--android:icon="@drawable/ic_menu_send"-->
-                <!--android:title="Send" />-->
-        <!--</menu>-->
-    <!--</item>-->
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/nav_updateVersion"
+                android:icon="@mipmap/ic_version_update"
+                android:title="@string/updateVersion" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@mipmap/ic_about"
+                android:title="@string/about" />
+            <item
+                android:id="@+id/nav_out"
+                android:icon="@mipmap/ic_out"
+                android:title="@string/out" />
+        </menu>
+    </item>
 
 </menu>

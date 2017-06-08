@@ -1,5 +1,6 @@
 package com.sjs.dz.rzxt3;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
@@ -47,7 +48,9 @@ public class LoginActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
     private Context context = LoginActivity.this;
     //http://172.16.10.242:8080/bcm_rz/appInterface/appLogin?userAccount=yang&passWord=1
-    private String ACC,PASSWORD,URL="http://172.16.10.242:8080/bcm_rz/appInterface/appLogin";
+    private String ACC,PASSWORD;
+    public static String URL="http://123.57.29.113:8080/MVNFHM/appInterface/";
+//            "http://172.16.10.242:8080/bcm_rz/appInterface/appLogin";
     private SharedPreferences sharedPrefs;
     private Button ll_update;
     private ProgressDialog pDialog;
@@ -56,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
     private MyApplication myApplication;
     private  DbManager db;
     private ServerBean serverBean;
+    private final int SDK_PERMISSION_REQUEST = 127;
+    private String permissionInfo;
     @ViewInject(R.id.et_acc)
     EditText et_Acc;
     @ViewInject(R.id.et_password)
@@ -75,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         myApplication=new MyApplication();
 
          db = x.getDb(myApplication.getDaoConfig());
-
+        getPersimmions();
 
     }
     /**
@@ -98,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
     }
      */
     private void LoginHttp(String acc,String password) {
-        RequestParams params = new RequestParams(URL);
+        RequestParams params = new RequestParams(URL+"/appLogin");
         params.addBodyParameter("userAccount",acc);
         params.addParameter("passWord",password);
         Log.i(TAG,"params="+params);
@@ -125,16 +130,21 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("USER_DEPT_NAME", user.getUSER_DEPT_NAME());
                     editor.putString("USER_DEPT_ORG_CODE", user.getUSER_DEPT_ORG_CODE());
                     editor.commit();
-                    Log.i(TAG, "解析成功：" + msg);
                     List<PactInfo> pactInfos = new ArrayList<PactInfo>();
                     List<ItemInfo> itemInfos = new ArrayList<ItemInfo>();
                     List<ProInfo>  proInfos  = new ArrayList<ProInfo>();
+                    List<MtlInfo>  mtlInfos  = new ArrayList<MtlInfo>();
                     pactInfos = serverBean.getHtList();
                     itemInfos = serverBean.getXmList();
                     proInfos  = serverBean.getCpList();
+                    mtlInfos  = serverBean.getMtList();
+
 
                     try {
                         Log.i(TAG, "pactInfos：" + pactInfos);
+                        Log.i(TAG, "pactInfos0：" + pactInfos.get(0).getPact_no());
+                        Log.i(TAG, "pactInfos1：" + pactInfos.get(1).getPact_no());
+                        Log.i(TAG, "pactInfos2：" + pactInfos.get(2).getPact_no());
                         db.saveOrUpdate(pactInfos);
                     } catch (DbException ex) {
                         ex.printStackTrace();
@@ -152,10 +162,18 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (DbException ex) {
                         ex.printStackTrace();
                     }
+                    try {
+                        Log.i(TAG, "mtInfos：" + mtlInfos);
+                        db.saveOrUpdate(mtlInfos);
+
+                    } catch (DbException ex) {
+                        ex.printStackTrace();
+                    }
                 }
 //                解析result
                 Intent intent = new Intent(LoginActivity.this,MyActivity.class);
                 startActivity(intent);
+                finish();
             }
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
@@ -176,6 +194,57 @@ public class LoginActivity extends AppCompatActivity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
     }
+    @TargetApi(23)
+    private void getPersimmions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ArrayList<String> permissions = new ArrayList<String>();
+            /***
+             * 定位权限为必须权限，用户如果禁止，则每次进入都会申请
+             */
+            // 定位精确位置
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+			/*
+			 * 读写权限和电话状态权限非必要权限(建议授予)只会申请一次，用户同意或者禁止，只会弹一次
+			 */
+            // 读写权限
+            if (addPermission(permissions, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                permissionInfo += "Manifest.permission.WRITE_EXTERNAL_STORAGE Deny \n";
+            }
+            // 读取电话状态权限
+            if (addPermission(permissions, Manifest.permission.READ_PHONE_STATE)) {
+                permissionInfo += "Manifest.permission.READ_PHONE_STATE Deny \n";
+            }
 
+            if (permissions.size() > 0) {
+                requestPermissions(permissions.toArray(new String[permissions.size()]), SDK_PERMISSION_REQUEST);
+            }
+        }
+    }
+    @TargetApi(23)
+    private boolean addPermission(ArrayList<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) { // 如果应用没有获得对应权限,则添加到列表中,准备批量申请
+            if (shouldShowRequestPermissionRationale(permission)){
+                return true;
+            }else{
+                permissionsList.add(permission);
+                return false;
+            }
+
+        }else{
+            return true;
+        }
+    }
+
+    @TargetApi(23)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        // TODO Auto-generated method stub
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }
 

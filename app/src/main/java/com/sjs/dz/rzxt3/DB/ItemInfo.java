@@ -45,11 +45,20 @@ public class ItemInfo {
     //检查类型
     @Column(name = "check_type")
     private String check_type;
+    //申请单编号
+    @Column(name = "apply_id")
+    private String apply_id;
 
+    public String getApply_id() {
+        return apply_id;
+    }
 
+    public void setApply_id(String apply_id) {
+        this.apply_id = apply_id;
+    }
 
     public ItemInfo(String item_no, String item_status, String pact_no, String pro_type, String rz_scope,
-                    String rz_type, String check_type) {
+                    String rz_type, String check_type, String apply_id) {
         this.item_no = item_no;
         this.item_status = item_status;
         this.pact_no = pact_no;
@@ -59,6 +68,7 @@ public class ItemInfo {
         this.rz_scope = rz_scope;
         this.rz_type = rz_type;
         this.check_type = check_type;
+        this.apply_id=apply_id;
 
 
     }
@@ -136,11 +146,11 @@ public class ItemInfo {
                 "item_no='" + item_no + '\'' +
                 ", item_status='" + item_status + '\'' +
                 ", pact_no='" + pact_no + '\'' +
-//                ", pro_no='" + pro_no + '\'' +
                 ", pro_type='" + pro_type + '\'' +
                 ", rz_scope='" + rz_scope + '\'' +
                 ", rz_type='" + rz_type + '\'' +
                 ", check_type='" + check_type + '\'' +
+                ", apply_id='" + apply_id + '\'' +
                 '}';
     }
 }

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v7.widget.AppCompatTextView;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +43,9 @@ import com.baidu.mapapi.utils.OpenClientUtil;
 import com.sjs.dz.rzxt3.DB.PactInfo;
 import com.sjs.dz.rzxt3.base.MyApplication;
 import org.xutils.DbManager;
+import org.xutils.common.Callback;
 import org.xutils.ex.DbException;
+import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.util.ArrayList;
@@ -60,25 +63,17 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class ViewFragment extends Fragment implements OnGetGeoCoderResultListener ,View.OnClickListener{
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
     private String TAG = this.getClass().getSimpleName();
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String section_number;
+    private String URL="http://172.16.10.242:8080/bcm_rz/appInterface";
     private MyApplication myApplication;
     private OnFragmentInteractionListener mListener;
-    private  List<Map<String, Object>>  pcatList;
-
-    private TextView tv_pact_no,pact_start_date,tv_pact_end_date,tv_com_name,tv_com_con_name,tv_com_con_ide,tv_tel,tv_addr;
-    private ImageView im_message,im_addr;
+    private TextView tv_pact_no,tv_pact_start_date,tv_pact_end_date,tv_com_name,tv_com_con_name,tv_com_con_ide,tv_com_con_tel,tv_addr,onclick1,onclick2;
+    private ImageView im_message,im_tel,im_addr;
     private Button bt_upload;
     private int page;
     private  List<PactInfo> pactInfos;
-    // The fragment argument representing
-    // the section number for this fragment.
     private static final String ARG_SECTION_NUMBER = "section_number";
     private GeoCoder mSearch = null; // 搜索模块，也可去掉地图模块独立使用
     private BaiduMap mBaiduMap = null;
@@ -117,8 +112,6 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
         View view = inflater.inflate(R.layout.fragment_view, container, false);
         initViews(view);
         initData();
@@ -128,18 +121,22 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
     }
     //初始化控件
     private void initViews(View view) {
-        tv_pact_no= (TextView) view.findViewById(R.id.pact_no);
-        pact_start_date= (TextView) view.findViewById(R.id.pact_start_date);
-        tv_pact_end_date= (TextView) view.findViewById(R.id.pact_end_date);
-        tv_com_con_name= (TextView) view.findViewById(R.id.com_con_name);
-        tv_com_con_ide= (TextView) view.findViewById(R.id.com_con_ide);
+        tv_pact_no= (TextView) view.findViewById(R.id.tv_pact_no);
+        tv_pact_start_date= (TextView) view.findViewById(R.id.tv_pact_start_date);
+        tv_pact_end_date= (TextView) view.findViewById(R.id.tv_pact_end_date);
+        tv_com_con_name= (TextView) view.findViewById(R.id.tv_com_con_name);
+        tv_com_con_ide= (TextView) view.findViewById(R.id.tv_com_con_ide);
 
-        tv_com_name= (TextView)view.findViewById(R.id.com_name);
-        tv_tel= (TextView) view.findViewById(R.id.com_con_tel);
+        tv_com_name= (TextView)view.findViewById(R.id.tv_com_name);
+        tv_com_con_tel= (TextView) view.findViewById(R.id.tv_com_con_tel);
         bt_upload=(Button)view.findViewById(R.id.btn_upload) ;
         tv_addr= (TextView) view.findViewById(R.id.tv_com_addr);
         im_addr=(ImageView) view.findViewById(R.id.im_com_addr);
 
+        im_message=(ImageView)view.findViewById(R.id.im_con_con_tel_dx);
+        im_tel=(ImageView) view.findViewById(R.id.im_con_con_tel);
+        onclick1=(TextView) view.findViewById(R.id.onclick1);
+        onclick2=(TextView) view.findViewById(R.id.onclick2);
 
         // 地图初始化
         mMapView = (MapView) view.findViewById(R.id.bmapView);
@@ -152,6 +149,19 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
         bt_upload.setOnClickListener(this);
         tv_addr.setOnClickListener(this);
         im_addr.setOnClickListener(this);
+        tv_com_con_tel.setOnClickListener(this);
+        im_tel.setOnClickListener(this);
+
+        im_message.setOnClickListener(this);
+        tv_pact_no.setOnClickListener(this);
+        tv_pact_start_date.setOnClickListener(this);
+        tv_pact_end_date.setOnClickListener(this);
+        tv_com_con_name.setOnClickListener(this);
+
+        tv_com_con_ide.setOnClickListener(this);
+        tv_com_name.setOnClickListener(this);
+        onclick1.setOnClickListener(this);
+        onclick2.setOnClickListener(this);
     }
 
     //初始化数据
@@ -166,51 +176,27 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
         }
 
         if(pactInfos == null || pactInfos.size() == 0){
+            Toast.makeText(getActivity(),"无任务信息",Toast.LENGTH_LONG).show();
             return;//请先调用dbAdd()方法
         }
         else{
-            Log.i(TAG,"pactInfos.size"+pactInfos.size());
-//            for (int i=0;i<pactInfos.size();i++){
-//                pcatList = new ArrayList<Map<String, Object>>();
-//                Map<String, Object> map = new HashMap<String, Object>();
-//                map.put("pact_no", pactInfos.get(i).getPact_no());
-//                map.put("pact_start_date", pactInfos.get(i).getPact_start_date());
-//                map.put("pact_end_date", pactInfos.get(i).getPact_end_date());
-//                map.put("pact_com_name",  pactInfos.get(i).getPact_com_name());
-//                map.put("pact_com_addr",  pactInfos.get(i).getPact_com_addr());
-//                map.put("pact_com_tel",  pactInfos.get(i).getPact_com_tel());
-//                map.put("pact_com_con_name", pactInfos.get(i).getPact_com_con_name());
-//                map.put("pact_com_con_ide",  pactInfos.get(i).getPact_com_con_ide());
-//                pcatList.add(map);
-//            }
-//            Log.i(TAG,"pcatList.size"+pcatList.size());
+            for (int i=0;i<pactInfos.size();i++)
+            Log.i(TAG,pactInfos.get(i).getPact_no());
         }
     }
 
     //控件注入数据
     private void setView() {
+        Log.i(TAG,"page="+page);
         tv_pact_no.setText(pactInfos.get(page).getPact_no());
-        pact_start_date.setText(pactInfos.get(page).getPact_start_date());
+        tv_pact_start_date.setText(pactInfos.get(page).getPact_start_date());
         tv_pact_end_date.setText(pactInfos.get(page).getPact_end_date());
         tv_com_con_name.setText(pactInfos.get(page).getPact_com_con_name());
         tv_com_con_ide.setText(pactInfos.get(page).getPact_com_con_ide());
 
         tv_com_name.setText(pactInfos.get(page).getPact_com_name());
-        tv_tel.setText(pactInfos.get(page).getPact_com_con_tel());
+        tv_com_con_tel.setText(pactInfos.get(page).getPact_com_con_tel());
         tv_addr.setText(pactInfos.get(page).getPact_com_addr());
-//        ListAdapter adapter = new SimpleAdapter(getActivity(), pcatList, R.layout.fragment_view,
-//                              new String[]{"pact_no", "pact_start_date", "pact_end_date","pact_com_name", "pact_com_addr", "pact_com_tel", "pact_com_con_name", "pact_com_con_ide"},
-//                              new int[]{R.id.pact_no, R.id.pact_start_date, R.id.pact_end_date,R.id.com_name,R.id.com_addr, R.id.com_con_tel, R.id.com_con_name, R.id.com_con_ide});
-//        setListAdapter(adapter);
-
-
-//        bt_upload.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(),GeoCoderDemo.class);
-//                startActivity(intent);
-//            }
-//        });
 
         /**
          * 发起搜索
@@ -226,22 +212,122 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
     public void onClick(View v) {
         switch (v.getId()){
             case  R.id.btn_upload:
-                Log.i(TAG,"btn_upload");
-                Intent intent = new Intent(getActivity(),GeoCoderDemo.class);
-                startActivity(intent);
+                Log.i(TAG,"onClick.btn_upload");
+                upload();
                 break;
             case  R.id.tv_com_addr:
-                Log.i(TAG,"tv_com_addr");
+                Log.i(TAG,"onClick.tv_com_addr");
                 startNavi();
                 break;
             case  R.id.im_com_addr:
-                Log.i(TAG,"im_com_addr");
+                Log.i(TAG,"onClick.im_com_addr");
                 startNavi();
                 break;
+            case R.id.tv_com_con_tel:
+                Log.i(TAG,"onClick.tv_com_con_tel");
+                cellTel();
+                break;
+            case R.id.im_con_con_tel:
+                Log.i(TAG,"onClick.im_con_con_tel");
+                cellTel();
+                break;
+            case R.id.im_con_con_tel_dx:
+                Log.i(TAG,"onClick.im_con_con_tel");
+                cellMessage();
+                break;
+            case R.id.tv_pact_no:
+                Log.i(TAG,"onClick.tv_pact_no");
+               onclickItem();
+                break;
+            case R.id.tv_com_con_name:
+                Log.i(TAG,"onClick.tv_com_con_name");
+                onclickItem();
+                break;
+            case R.id.tv_com_name:
+                Log.i(TAG,"onClick.tv_com_name");
+                onclickItem();
+                break;
+            case R.id.tv_com_con_ide:
+                Log.i(TAG,"onClick.tv_com_con_ide");
+                onclickItem();
+                break;
+            case R.id.tv_pact_start_date:
+                Log.i(TAG,"onClick.tv_pact_start_date");
+                onclickItem();
+                break;
+            case R.id.tv_pact_end_date:
+                Log.i(TAG,"onClick.tv_pact_end_date");
+                onclickItem();
+                break;
+            case R.id.onclick1:
+                Log.i(TAG,"onClick.onclick1");
+                onclickItem();
+                break;
+            case R.id.onclick2:
+                Log.i(TAG,"onClick.onclick2");
+                onclickItem();
+                break;
+
             default:
                 break;
         }
     }
+//合同资料上传
+    private void upload() {
+        RequestParams params = new RequestParams(URL+"/makesure");
+
+        //根据当前请求方式添加参数位置
+        params.addParameter("TASK_ID",pactInfos.get(page).getTask_id() );
+        params.addParameter("APPLY_ID", pactInfos.get(page).getApply_id());
+        Log.i(TAG, "params："+params);
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.i(TAG, "result："+result);
+                //成功则改变任务状态 失败则Toast
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+
+            }
+
+            @Override
+            public void onFinished() {
+
+            }
+
+        });
+    }
+    //打开合同详情
+    private void onclickItem() {
+        Intent intent = new Intent(getActivity(),ItemActivity.class);
+        intent.putExtra("pact_no", tv_pact_no.getText().toString());
+        startActivity(intent);
+    }
+    //发送短信
+    private void cellMessage() {
+        //发短息
+        String phone = tv_com_con_tel.getText().toString();
+        Uri smsToUri = Uri.parse("smsto:"+phone);
+        Intent intent = new Intent(Intent.ACTION_SENDTO, smsToUri);
+        intent.putExtra("sms_body", "");
+        startActivity(intent);
+
+    }
+    //拨打电话
+    private void cellTel() {
+        //激活可以打电话的组件
+        String phone = tv_com_con_tel.getText().toString();
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phone, null));
+        startActivity(intent);
+    }
+
 
     //文字信息查找地理位置
     @Override
@@ -286,20 +372,40 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
      * 启动百度地图导航(Native)
      */
     public void startNavi() {
-        LatLng pt1 = new LatLng(mLat1, mLon1);
-        LatLng pt2 = new LatLng(mLat2, mLon2);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("您确认打开百度地图客户端？");
+        builder.setTitle("提示");
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                LatLng pt1 = new LatLng(mLat1, mLon1);
+                LatLng pt2 = new LatLng(mLat2, mLon2);
 
-        // 构建 导航参数
-        NaviParaOption para = new NaviParaOption()
-                .startPoint(pt1).endPoint(pt2)
-                .startName("天安门").endName("百度大厦");
+                // 构建 导航参数
+                NaviParaOption para = new NaviParaOption()
+                        .startPoint(pt1).endPoint(pt2)
+                        .startName("天安门").endName("百度大厦");
 
-        try {
-            BaiduMapNavigation.openBaiduMapNavi(para, getActivity());
-        } catch (BaiduMapAppNotSupportNaviException e) {
-            e.printStackTrace();
-            showDialog();
-        }
+                try {
+                    BaiduMapNavigation.openBaiduMapNavi(para, getActivity());
+                } catch (BaiduMapAppNotSupportNaviException e) {
+                    e.printStackTrace();
+                    showDialog();
+                }
+                dialog.dismiss();
+                OpenClientUtil.getLatestBaiduMapApp(getActivity());
+            }
+        });
+
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
+
 
     }
 
@@ -368,10 +474,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
         void onFragmentInteraction(Uri uri);
     }
 
-    @Override
-    public String toString() {
-        return super.toString();
-    }
+
 
     @Override
     public void onStart() {

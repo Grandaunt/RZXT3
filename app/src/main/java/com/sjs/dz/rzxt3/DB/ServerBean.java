@@ -14,6 +14,16 @@ public class ServerBean {
     private List<ProInfo> cpList;
     private List<ItemInfo> xmList;
 
+    public List<MtlInfo> getMtList() {
+        return mtList;
+    }
+
+    public void setMtList(List<MtlInfo> mtList) {
+        this.mtList = mtList;
+    }
+
+    private List<MtlInfo> mtList;
+
     public int getError() {
         return error;
     }
@@ -71,6 +81,21 @@ public class ServerBean {
                 ", htList=" + htList +
                 ", cpList=" + cpList +
                 ", xmList=" + xmList +
+                ", mtList=" + mtList +
                 '}';
+    }
+
+    public ServerBean(int error, String msg,UserInfo user,List<PactInfo> htList,List<ProInfo> cpList,List<ItemInfo> xmList,List<MtlInfo> mtList) {
+        this.error = error;
+        this.msg = msg;
+        this.user = user;
+        this.htList = htList;
+        this.cpList = cpList;
+        this.xmList = xmList;
+        this.mtList = mtList;
+
+    }
+    //默认的构造方法必须写出，如果没有，这张表是创建不成功的
+    public ServerBean() {
     }
 }

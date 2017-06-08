@@ -38,10 +38,26 @@ public class ProInfo {
     @SerializedName("prdt_output")
     private String pro_output;
 
+    //基地面积
+    @Column(name = "base_area")
+    @SerializedName("base_area")
+    private String base_area;
+    //产品描述
+    @Column(name = "pro_desc")
+    @SerializedName("pro_desc")
+    private String pro_desc;
+    //有机配料名称
+    @Column(name = "Organic_Toppings")
+    private String Organic_Toppings;
+    //配料供应总量
+    @Column(name = "Total_Supply")
+    private String Total_Supply;
     //产品数量
     @Column(name = "pro_num")
     @SerializedName("prdt_num")
     private String pro_num;
+
+
     //产品产值
     @Column(name = "pro_ralue")
     @SerializedName("prdt_ralue")
@@ -56,7 +72,8 @@ public class ProInfo {
 
 
     public ProInfo(String pro_no, String item_no, String pro_name, String pro_area, String pro_output,
-                   String pro_num, String pro_ralue, String base_name,String base_address) {
+                   String pro_num, String pro_ralue, String base_name,String base_address,String base_area,
+                   String pro_desc,String Organic_Toppings,String Total_Supply) {
         this.pro_no = pro_no;
         this.item_no = item_no;
         this.pro_name = pro_name;
@@ -67,6 +84,11 @@ public class ProInfo {
         this.pro_ralue = pro_ralue;
         this.base_name = base_name;
         this.base_address = base_address;
+        this.base_area = base_area;
+
+        this.pro_desc = pro_desc;
+        this.Organic_Toppings = Organic_Toppings;
+        this.Total_Supply = Total_Supply;
 
 
     }
@@ -146,6 +168,38 @@ public class ProInfo {
         this.base_address = base_address;
     }
 
+    public String getBase_area() {
+        return base_area;
+    }
+
+    public void setBase_area(String base_area) {
+        this.base_area = base_area;
+    }
+
+    public String getPro_desc() {
+        return pro_desc;
+    }
+
+    public void setPro_desc(String pro_desc) {
+        this.pro_desc = pro_desc;
+    }
+
+    public String getOrganic_Toppings() {
+        return Organic_Toppings;
+    }
+
+    public void setOrganic_Toppings(String organic_Toppings) {
+        Organic_Toppings = organic_Toppings;
+    }
+
+    public String getTotal_Supply() {
+        return Total_Supply;
+    }
+
+    public void setTotal_Supply(String total_Supply) {
+        Total_Supply = total_Supply;
+    }
+
     @Override
     public String toString() {
         return "ProInfo{" +
@@ -154,6 +208,10 @@ public class ProInfo {
                 ", pro_name='" + pro_name + '\'' +
                 ", pro_area='" + pro_area + '\'' +
                 ", pro_output='" + pro_output + '\'' +
+                ", base_area='" + base_area + '\'' +
+                ", pro_desc='" + pro_desc + '\'' +
+                ", Organic_Toppings='" + Organic_Toppings + '\'' +
+                ", Total_Supply='" + Total_Supply + '\'' +
                 ", pro_num='" + pro_num + '\'' +
                 ", pro_ralue='" + pro_ralue + '\'' +
                 ", base_name='" + base_name + '\'' +

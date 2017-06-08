@@ -3,9 +3,11 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="tab1">项目</string>
+    <string name="tab1">合同详情</string>
     <string name="tab2">合同</string>
-    <string name="tab3">我的</string>
+    <string name="tab3">产品信息</string>
+    <string name="tab4">相关材料</string>
+    <string name="tab5">上传报告</string>
 
 
     <string name="Input_useracc">请输入账号</string>
@@ -38,7 +40,7 @@
     <string name="save">上 传</string>
     <string name="con">联系人:</string>
     <string name="about_main_text">
-        中华全国供销合作总社北京商业机械研究所于1978年经国务院国科发字［1978］356号文批准成立，位于北京市丰台区总部基地，是直属于中华全国供销合作总社的国家级科研院所，下属单位有北京中合金诺认证中心有限公司和北京中合智盛有限公司。
+             中华全国供销合作总社北京商业机械研究所于1978年经国务院国科发字［1978］356号文批准成立，位于北京市丰台区总部基地，是直属于中华全国供销合作总社的国家级科研院所，下属单位有北京中合金诺认证中心有限公司和北京中合智盛有限公司。
         北京商业机械研究所围绕“农产品标准化”和“农产品信息追溯”应用中的关键性技术问题，致力于开发一套符合农产品标准与信息查询服务的系统平台，以信息化与互联网技术推动供销合作社传统业务的“智慧化”升级,
         力求突出特色，推动“透明云农场”在供销合作社业务领域的应用。有效提高供销合作社为农服务的规模、质量与效率。
 
@@ -92,11 +94,16 @@
     <string name="title_activity_my">MyActivity</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_loading">LoadingActivity</string>
+    <string name="title_activity_item">项目</string>
+    <string name="title_activity_about">关于我们</string>
 
     <string name="clear">清除缓存</string>
     <string name="about">关于我们</string>
     <string name="out">退出</string>
     <string name="upload">上    传</string>
+    <string name="upload1">上传</string>
+    <string name="down">下载</string>
+    <string name="updateVersion">版本更新</string>
     <string name="title_main">合同</string>
 
     <string name="pact_no">2014109862436348723590</string>
@@ -109,4 +116,42 @@
     <string name="com_con_tel">182573016283</string>
     <string name="com_con_ide">经理</string>
     <string name="date_biao">-</string>
+
+    <string name="item_about">项目介绍</string>
+    <string name="item_no">项目编号</string>
+    <string name="item_status">项目状态</string>
+    <string name="pro_type">食用菌栽培</string>
+    <string name="rz_scope">加工</string>
+    <string name="rz_type">有机认证</string>
+    <string name="check_type">扩大认证</string>
+    <string name="pro_info">产品信息</string>
+    <string name="item_material">相关材料</string>
+    <string name="item_report">检查报告</string>
+
+    <string name="pro_no">产品编号</string>
+    <string name="base_name">基地名称</string>
+    <string name="base_addr">基地地址</string>
+    <string name="base_area">基地面积</string>
+    <string name="pro_ralue">产品产值</string>
+    <string name="pro_name">产品名称</string>
+    <string name="Organic_toppings">有机配料名称</string>
+    <string name="Total_supply">配料供应总量</string>
+    <string name="pro_output">预产量</string>
+    <string name="pro_area">产品面积</string>
+    <string name="pro_describe">产品描述</string>
+    <string name="pro_num">产品数量</string>
+
+
+    <string name="material_01">材料压缩包</string>
+    <string name="material_02">资质文件</string>
+    <string name="material_03">土地使用证明文件及合同</string>
+    <string name="material_04">环境证明文件</string>
+    <string name="material_05">图表类文件</string>
+    <string name="material_06">申请书、调查表</string>
+    <string name="material_07">手册、规程、内检等体系文件</string>
+    <string name="material_08">其他文件</string>
+
+    <string name="look">查看</string>
+
+
 </resources>

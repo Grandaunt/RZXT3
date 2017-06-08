@@ -53,7 +53,7 @@ public class MyApplication extends Application {
             //设置数据库路径，默认存储在app的私有目录
             .setDbDir(new File("/mnt/sdcard/"))
             //设置数据库的版本号
-            .setDbVersion(3)
+            .setDbVersion(5)
             //设置数据库打开的监听
             .setDbOpenListener(new DbManager.DbOpenListener() {
                 @Override
@@ -66,6 +66,7 @@ public class MyApplication extends Application {
             .setDbUpgradeListener(new DbManager.DbUpgradeListener() {
                 @Override
                 public void onUpgrade(DbManager db, int oldVersion, int newVersion) {
+
                 }
             })
             //设置表创建的监听
@@ -73,6 +74,7 @@ public class MyApplication extends Application {
                 @Override
                 public void onTableCreated(DbManager db, TableEntity<?> table){
                     Log.i("JAVA", "onTableCreated：" + table.getName());
+
                 }
             });
     //设置是否允许事务，默认true
