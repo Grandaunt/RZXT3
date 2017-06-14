@@ -15,6 +15,7 @@ import android.widget.SimpleAdapter;
 
 import com.sjs.dz.rzxt3.DB.ItemInfo;
 import com.sjs.dz.rzxt3.DB.ProInfo;
+import com.sjs.dz.rzxt3.DB.XDBManager;
 import com.sjs.dz.rzxt3.base.MyApplication;
 
 import org.xutils.DbManager;
@@ -57,8 +58,9 @@ public class ProInfoActivity extends AppCompatActivity {
         //浸透式状态栏
         initWindow();
         listView=(ListView)findViewById(R.id.pro_info_listview);
-        MyApplication myApplication=new MyApplication();
-        DbManager db = x.getDb(myApplication.getDaoConfig());
+//        MyApplication myApplication=new MyApplication();
+//        DbManager db = x.getDb(myApplication.getDaoConfig());
+        DbManager db = x.getDb(XDBManager.getDaoConfig());
         proInfos=null;
         try {
             proInfos = db.selector(ProInfo.class)

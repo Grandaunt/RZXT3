@@ -19,6 +19,9 @@ public class MtlInfo {
      * property = "NOT NULL"：添加约束
      */
     //文件编号
+    @Column(name = "mtl_id")
+    private int mtl_id=0;
+
     @Column(name = "mtl_no",isId = true,autoGen = true,property = "NOT NULL")
     private String mtl_no;
     //项目id
@@ -46,9 +49,9 @@ public class MtlInfo {
     private String mtl_down_path;
 
 
-    public MtlInfo(String item_no,String mtl_type,String mtl_name,String mtl_size, String mtl_time,
+    public MtlInfo(String mtl_no,String item_no,String mtl_type,String mtl_name,String mtl_size, String mtl_time,
                     String mtl_format,String mtl_down_path) {
-//        this.mtl_no = mtl_no;
+        this.mtl_no = mtl_no;
         this.item_no = item_no;
         this.mtl_type = mtl_type;
         this.mtl_name = mtl_name;
@@ -62,6 +65,14 @@ public class MtlInfo {
     public MtlInfo() {
     }
 
+    public int getMtl_id() {
+        return mtl_id;
+    }
+
+    public void setMtl_id(int mtl_id) {
+        this.mtl_id = mtl_id;
+    }
+
     public String getMtl_no() {
         return mtl_no;
     }
@@ -69,7 +80,6 @@ public class MtlInfo {
     public void setMtl_no(String mtl_no) {
         this.mtl_no = mtl_no;
     }
-
     public String getItem_no() {
         return item_no;
     }
@@ -129,7 +139,8 @@ public class MtlInfo {
     @Override
     public String toString() {
         return "MtlInfo{" +
-                "mtl_no='" + mtl_no + '\'' +
+                "mtl_id=" + mtl_id +
+                ", mtl_no='" + mtl_no + '\'' +
                 ", item_no='" + item_no + '\'' +
                 ", mtl_type='" + mtl_type + '\'' +
                 ", mtl_name='" + mtl_name + '\'' +

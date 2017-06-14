@@ -1,9 +1,101 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sjs.dz.rzxt3.ClearActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.sjs.dz.rzxt3.ClearActivity"
+    android:orientation="vertical"
+    android:background="@color/greenf">
+    <RelativeLayout
+        android:id="@+id/ly_manage_title"
+        android:layout_height="100dp"
+        android:paddingTop="40dp"
+        android:layout_width="wrap_content"
+        android:background="@color/colorPrimary">
+        <ImageButton
+            android:id="@+id/im_back"
+            android:layout_height="50dp"
+            android:layout_width="50dp"
+            android:background="@color/colorPrimary"
+            android:src="@mipmap/ic_back_green"/>
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="管理缓存"
+            android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_toRightOf="@+id/im_back"
+            android:paddingTop="10dp"
+            />
+        <TextView
+            android:id="@+id/tv_batchdelete"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:paddingTop="25dp"
+            android:paddingRight="20dp"
+            android:text="批量删除"/>
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_batchdelete_cancel"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:paddingTop="25dp"
+            android:paddingRight="20dp"
+            android:text="取消"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
+    <ListView
+        android:id="@+id/lv_recent_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ly_manage_title"
+        />
+
+
+
+    <LinearLayout
+        android:id="@+id/ll_delete_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/tv_choose_delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="0.5dp"
+            android:padding="10dp"
+            android:background="#3fb7e4"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:text="删除"/>
+
+        <TextView
+            android:id="@+id/tv_choose_all"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="10dp"
+            android:layout_marginLeft="0.5dp"
+            android:layout_marginRight="1dp"
+            android:background="#3fb7e4"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:text="全选"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -49,7 +49,9 @@ public class LoginActivity extends AppCompatActivity {
     private Context context = LoginActivity.this;
     //http://172.16.10.242:8080/bcm_rz/appInterface/appLogin?userAccount=yang&passWord=1
     private String ACC,PASSWORD;
-    public static String URL="http://123.57.29.113:8080/MVNFHM/appInterface/";
+//    public static String URL="http://123.57.29.113:8080/MVNFHM/appInterface/";
+    public static String URL="http://172.16.10.242:8080/bcm_rz/appInterface/";
+
 //            "http://172.16.10.242:8080/bcm_rz/appInterface/appLogin";
     private SharedPreferences sharedPrefs;
     private Button ll_update;
@@ -77,9 +79,12 @@ public class LoginActivity extends AppCompatActivity {
         x.view().inject(this);
         sharedPrefs = getSharedPreferences("RZ3Share", Context.MODE_PRIVATE);
 
-        myApplication=new MyApplication();
+//        myApplication=new MyApplication();
+        XDBManager.initDb();
+         db = x.getDb(XDBManager.getDaoConfig());
+        String name=db.getDaoConfig().getDbName().toString();
+        Log.i(TAG,"initData.db_addr"+name);
 
-         db = x.getDb(myApplication.getDaoConfig());
         getPersimmions();
 
     }
@@ -103,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
     }
      */
     private void LoginHttp(String acc,String password) {
-        RequestParams params = new RequestParams(URL+"/appLogin");
+        RequestParams params = new RequestParams(URL+"appLogin");
         params.addBodyParameter("userAccount",acc);
         params.addParameter("passWord",password);
         Log.i(TAG,"params="+params);
@@ -115,9 +120,9 @@ public class LoginActivity extends AppCompatActivity {
                 java.lang.reflect.Type type = new TypeToken<ServerBean>() {}.getType();
                 serverBean = gson.fromJson(result, type);
 //                serverBean = gson.fromJson(result, ServerBean.class);
-                int err = serverBean.getError();
+                String err = serverBean.getErr();
                 String msg = serverBean.getMsg();
-                if (err == 0) {
+                if (err.equals("0")) {
                     //解析成功
                     Log.i(TAG, "解析成功：" + msg);
                     UserInfo user = serverBean.getUser();
@@ -128,7 +133,9 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("USER_IDE", user.getUSER_IDE());
                     editor.putString("USER_TEL", user.getUSER_TEL());
                     editor.putString("USER_DEPT_NAME", user.getUSER_DEPT_NAME());
+                    editor.putString("PASSWORD", PASSWORD);
                     editor.putString("USER_DEPT_ORG_CODE", user.getUSER_DEPT_ORG_CODE());
+                    editor.putString("AUTH_TOKEN","right");
                     editor.commit();
                     List<PactInfo> pactInfos = new ArrayList<PactInfo>();
                     List<ItemInfo> itemInfos = new ArrayList<ItemInfo>();
@@ -138,32 +145,29 @@ public class LoginActivity extends AppCompatActivity {
                     itemInfos = serverBean.getXmList();
                     proInfos  = serverBean.getCpList();
                     mtlInfos  = serverBean.getMtList();
-
-
+                    Log.i(TAG, "pactInfos：" + pactInfos);
+                    Log.i(TAG, "mtInfos：" + mtlInfos);
+                    Log.i(TAG, "proInfos：" + proInfos);
+                    Log.i(TAG, "itemInfos：" + itemInfos);
                     try {
-                        Log.i(TAG, "pactInfos：" + pactInfos);
-                        Log.i(TAG, "pactInfos0：" + pactInfos.get(0).getPact_no());
-                        Log.i(TAG, "pactInfos1：" + pactInfos.get(1).getPact_no());
-                        Log.i(TAG, "pactInfos2：" + pactInfos.get(2).getPact_no());
                         db.saveOrUpdate(pactInfos);
                     } catch (DbException ex) {
                         ex.printStackTrace();
                     }
                     try {
-                        Log.i(TAG, "itemInfos：" + itemInfos);
+
                         db.saveOrUpdate(itemInfos);
                     } catch (DbException ex) {
                         ex.printStackTrace();
                     }
                     try {
-                        Log.i(TAG, "proInfos：" + proInfos);
+
                         db.saveOrUpdate(proInfos);
 
                     } catch (DbException ex) {
                         ex.printStackTrace();
                     }
                     try {
-                        Log.i(TAG, "mtInfos：" + mtlInfos);
                         db.saveOrUpdate(mtlInfos);
 
                     } catch (DbException ex) {

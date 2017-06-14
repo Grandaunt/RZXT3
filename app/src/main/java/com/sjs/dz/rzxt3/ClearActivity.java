@@ -1,139 +1,262 @@
 package com.sjs.dz.rzxt3;
 
-import android.annotation.TargetApi;
-import android.content.Intent;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.os.Environment;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
+import com.sjs.dz.rzxt3.Adapter.ContactAdapter;
 import com.sjs.dz.rzxt3.DB.ItemInfo;
-import com.sjs.dz.rzxt3.base.MyApplication;
+import com.sjs.dz.rzxt3.DB.MtlInfo;
+import com.sjs.dz.rzxt3.DB.PactInfo;
+import com.sjs.dz.rzxt3.DB.XDBManager;
+import com.sjs.dz.rzxt3.utils.FileUtils;
 
 import org.xutils.DbManager;
+import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class ClearActivity extends AppCompatActivity {
+public class ClearActivity extends Activity implements View.OnClickListener  {
     private String TAG = this.getClass().getSimpleName();
-    private ImageView im_back;
-    private ListView listView;
-    private int pflag;
-    private List<Map<String,Object>> list_map = new ArrayList<Map<String,Object>>(); //定义一个适配器对象
+    private TextView tvMultiChoose;			//打开多选
+    private TextView tvMultiChooseCancel;	//关闭多选
+    private ListView lv;
+    private ContactAdapter adapter;
+
+
+
+    private List<PactInfo> contacts = new ArrayList<PactInfo>();
+    private List<PactInfo> contactSelectedList = new ArrayList<PactInfo>(); 	//记录被选中过的item
+
+    private LinearLayout llDeleteContainer;
+    private TextView tvChooseAll;			//全选
+    private TextView tvChooseDeletel;		//删除所选项
+    private ImageButton backBtn;
+    private  ArrayList<HashMap<String, String>> taskList;
+    private String userAcc = "";//信贷员
+    private int task_status=3;//任务状态
+    private   DbManager db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clear);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_item);
-        toolbar.setTitle("");//设置主标题
-        setSupportActionBar(toolbar);
-        im_back = (ImageView) findViewById(R.id.im_item_back);
-        im_back.setOnClickListener(new View.OnClickListener() {
+        findView();
+        initView();
+         db = x.getDb(XDBManager.getDaoConfig());
+        String name=db.getDaoConfig().getDbName();
+        Log.i(TAG,"数据库名称"+name);
+    }
+    private void findView(){
+        tvMultiChoose = (TextView)findViewById(R.id.tv_batchdelete);
+        tvMultiChooseCancel = (TextView)findViewById(R.id.tv_batchdelete_cancel);
+        tvMultiChoose.setOnClickListener(this);
+        tvMultiChooseCancel.setOnClickListener(this);
+        backBtn = (ImageButton)findViewById(R.id.im_back);
+        backBtn.setOnClickListener(this);
+        llDeleteContainer = (LinearLayout)findViewById(R.id.ll_delete_container);
+        tvChooseAll = (TextView)findViewById(R.id.tv_choose_all);
+        tvChooseDeletel = (TextView)findViewById(R.id.tv_choose_delete);
+
+
+        tvChooseAll.setOnClickListener( this);
+        tvChooseDeletel.setOnClickListener(this);
+        lv = (ListView)findViewById(R.id.lv_recent_contact);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                finish();
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
             }
         });
-        //浸透式状态栏
-        initWindow();
-        listView=(ListView)findViewById(R.id.item_listview);
-        Intent intent = getIntent();
-        MyApplication myApplication=new MyApplication();
-        DbManager db = x.getDb(myApplication.getDaoConfig());
-        List<ItemInfo> itemInfos = new ArrayList<ItemInfo>();
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                tvMultiChoose.setVisibility(View.GONE);
+                tvMultiChooseCancel.setVisibility(View.VISIBLE);
+                llDeleteContainer.setVisibility(View.VISIBLE);
+
+                contactSelectedList.clear();	//清空被选中的item项
+                adapter = new ContactAdapter(ClearActivity.this, contacts, true);
+                lv.setAdapter(adapter);
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1,
+                                            int position, long arg3) {
+                        boolean isSelect = adapter.getisSelectedAt(position);
+
+                        if(!isSelect){
+                            //当前为被选中，记录下来，用于删除
+                            contactSelectedList.add(contacts.get(position));
+                        }else{
+                            contactSelectedList.remove(contacts.get(position));
+                        }
+
+                        //选中状态的切换
+                        adapter.setItemisSelectedMap(position, !isSelect);
+                    }
+                });
+                return false;
+            }
+        });
+    }
+
+    private void initView(){
+        //获取信贷员id
+        db = x.getDb(XDBManager.getDaoConfig());
+        List<PactInfo> pactInfos = new ArrayList<PactInfo>();
         try {
-            itemInfos = db.selector(ItemInfo.class)
-                    .where("pact_no","=",intent.getStringExtra("pact_no"))
+            pactInfos = db.selector(PactInfo.class)
                     .findAll();
         } catch (DbException e) {
             e.printStackTrace();
         }
-        if(itemInfos == null || itemInfos.size() == 0){
-            Log.i(TAG,"itemInfos.size"+itemInfos.size()+"未查到数据");
-        }
-        else{
-            Log.i(TAG,"itemInfos.size"+itemInfos.size());
-            Log.i(TAG,"itemInfos.size"+itemInfos.get(0));
-            //1.准备好数据源，循环为listView添加数据（数据源的准备工作，这里是模拟从SQLite中查询数据）
-            for(int i=0;i<itemInfos.size();i++){
-                Map<String,Object> items = new HashMap<String, Object>(); //创建一个键值对的Map集合，用来存放名字和头像
-                items.put("item_no", itemInfos.get(i).getItem_no());
-                items.put("item_status", itemInfos.get(i).getItem_status());
-                items.put("pro_type", itemInfos.get(i).getPro_type());
-                items.put("rz_scope", itemInfos.get(i).getRz_scope());
-                items.put("rz_type", itemInfos.get(i).getRz_type());
-                items.put("check_type", itemInfos.get(i).getCheck_type());
-                list_map.add(items);   //把这个存放好数据的Map集合放入到list中，这就完成类数据源的准备工作
-            }
-            Log.i(TAG,"list_map.size"+list_map.size()+":"+list_map.get(0).get("pro_type"));
-            SimpleAdapter simpleAdapter = new SimpleAdapter(
-                    ClearActivity.this,
-                    list_map,
-                    R.layout.item_item,
-                    new String[]{"item_no", "item_status", "pro_type","rz_scope","rz_type","check_type"},
-                    new int[]{R.id.tv_item_no, R.id.tv_item_status, R.id.tv_item_pro_type,R.id.tv_item_rz_scope, R.id.tv_item_rz_type,R.id.tv_item_check_type});
-            listView.setAdapter(simpleAdapter);
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    pflag=position;
-                    //我们需要的内容，跳转页面或显示详细信息
-                    LinearLayout ly_pro_info=(LinearLayout)view.findViewById(R.id.ly_item_pro_info);
-                    LinearLayout ly_material=(LinearLayout)view.findViewById(R.id.ly_item_pro_material);
-                    LinearLayout ly_item_pro_report=(LinearLayout)view.findViewById(R.id.ly_item_pro_report);
-                    ly_pro_info.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.i(TAG,"ly_pro_info"+list_map.get(pflag).get("item_no").toString()+"跳转");
-                            Intent intents = new Intent(ClearActivity.this,ProInfoActivity.class);
-                            intents.putExtra("item_no", list_map.get(pflag).get("item_no").toString());
-                            intents.putExtra("rz_scope", list_map.get(pflag).get("rz_scope").toString());
-                            startActivity(intents);
+
+
+        contacts =pactInfos;
+        adapter = new ContactAdapter(this, contacts, false);
+        lv.setAdapter(adapter);
+
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.im_back:
+                finish();
+                break;
+
+            case R.id.tv_batchdelete:
+                //打开多选
+                tvMultiChoose.setVisibility(View.GONE);
+                tvMultiChooseCancel.setVisibility(View.VISIBLE);
+                llDeleteContainer.setVisibility(View.VISIBLE);
+
+                contactSelectedList.clear();	//清空被选中的item项
+                adapter = new ContactAdapter(this, contacts, true);
+                lv.setAdapter(adapter);
+                lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1,
+                                            int position, long arg3) {
+                        boolean isSelect = adapter.getisSelectedAt(position);
+
+                        if(!isSelect){
+                            //当前为被选中，记录下来，用于删除
+                            contactSelectedList.add(contacts.get(position));
+                        }else{
+                            contactSelectedList.remove(contacts.get(position));
                         }
-                    });
-                    ly_material.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.i(TAG,"ly_material"+list_map.get(pflag).get("item_no").toString()+"跳转");
-                            Intent intents = new Intent(ClearActivity.this,DownMaterialActivity.class);
-                            intents.putExtra("item_no", list_map.get(pflag).get("item_no").toString());
-                            startActivity(intents);
+
+                        //选中状态的切换
+                        adapter.setItemisSelectedMap(position, !isSelect);
+                    }
+                });
+                break;
+
+            case R.id.tv_batchdelete_cancel: //关闭多选
+                tvMultiChoose.setVisibility(View.VISIBLE);
+                tvMultiChooseCancel.setVisibility(View.GONE);
+                llDeleteContainer.setVisibility(View.GONE);
+
+                contactSelectedList.clear();
+                adapter = new ContactAdapter(this, contacts, false);
+                lv.setAdapter(adapter);
+
+                break;
+            case R.id.tv_choose_delete: //删除所选项
+                tvMultiChoose.setVisibility(View.VISIBLE);
+                tvMultiChooseCancel.setVisibility(View.GONE);
+                llDeleteContainer.setVisibility(View.GONE);
+
+                for(PactInfo c : contactSelectedList){
+
+
+//                    PactInfo repo1 = new TaskPro(ClearActivity.this);
+//                    repo1.delete(c.task_no);
+//                    //删除文件夹
+//                    Log.i(TAG,"/RZXT/" + userAcc + "/" + c.task_no);
+
+
+                    List<ItemInfo> itemInfos = new ArrayList<ItemInfo>();
+                    try {
+                        itemInfos.clear();
+                        itemInfos = db.selector(ItemInfo.class)
+                                .where("pact_no","=",c.getPact_no())
+                                .findAll();
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+                    for(int i=0;i<itemInfos.size();i++) {
+                        String fileName = Environment.getExternalStorageDirectory() + "/rzxt/" + itemInfos.get(i).getItem_no();
+                        File file = new File(fileName);
+                        FileUtils.delFile(file);
+
+                        //删除数据库
+                        WhereBuilder b = WhereBuilder.b();
+                        b.and("item_no","=",itemInfos.get(i).getItem_no());
+                        b.and("mtl_type", "in", new int[]{7, 8, 9});//构造修改的条件
+                        try {
+                            db.delete(MtlInfo.class, b);
+                        } catch (DbException e) {
+                            e.printStackTrace();
                         }
-                    });
-                    ly_item_pro_report.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.i(TAG,"item_no"+list_map.get(pflag).get("item_no").toString()+"跳转");
-                            Intent intents = new Intent(ClearActivity.this,UploadReportActivity.class);
-                            intents.putExtra("item_no", list_map.get(pflag).get("item_no").toString());
-                            startActivity(intents);
-                        }
-                    });
+                    }
+                    contacts.remove(c);
                 }
-            });
+
+                contactSelectedList.clear();
+                adapter = new ContactAdapter(this, contacts, false);
+                lv.setAdapter(adapter);
+
+                break;
+            case R.id.tv_choose_all: //全选
+
+                for(int i=0; i<contacts.size(); i++){
+                    adapter.setItemisSelectedMap(i, true);
+                    contactSelectedList.add(contacts.get(i));
+                }
+
+                break;
+            default:
+                break;
         }
     }
 
-    //浸入式状态栏
-    @TargetApi(19)
-    private void initWindow() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+    @Override
+    protected void onResume() {
+
+
+        List<PactInfo> pactInfos = new ArrayList<PactInfo>();
+        try {
+            pactInfos.clear();
+            pactInfos = db.selector(PactInfo.class)
+                    .findAll();
+        } catch (DbException e) {
+            e.printStackTrace();
         }
-    }
+        contacts =pactInfos;
+        /**
+         * 第三个参数表示是否显示checkbox
+         */
+        adapter = new ContactAdapter(this, contacts, false);
+        lv.setAdapter(adapter);
+        super.onResume();
+
     }
 
+
+}

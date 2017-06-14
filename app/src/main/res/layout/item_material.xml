@@ -3,21 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:padding="20dp"
+    android:padding="10dp"
     android:layout_marginTop="10dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:gravity="center">
     <ImageView
         android:id="@+id/im_item_material"
         android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_height="match_parent"
         android:src="@mipmap/ic_word"
-        android:padding="10dp"/>
+        />
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/greenf"
+        android:background="@color/white"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
     <TextView
         android:id="@+id/tv_item_material_name"
         android:layout_width="match_parent"
@@ -50,6 +52,7 @@
         android:layout_height="wrap_content"
         android:text="@string/look"
         android:background="@color/white"
+        android:focusable="false"
 
         />
 </LinearLayout>

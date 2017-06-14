@@ -12,11 +12,9 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-
 import com.sjs.dz.rzxt3.DB.MtlInfo;
 import com.sjs.dz.rzxt3.DB.XDBManager;
 import com.sjs.dz.rzxt3.R;
-import com.sjs.dz.rzxt3.base.MyApplication;
 import com.sjs.dz.rzxt3.utils.FileUtils;
 import com.sjs.dz.rzxt3.utils.MyUtils;
 
@@ -29,20 +27,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 /**
  * Created by SJS on 2017/1/4.
  */
 
 
-public class TaskInfoGet1ReAdapter extends RecyclerView.Adapter<TaskInfoGet1ReAdapter.ViewHolder> {
+public class TaskInfoGet2ReAdapter extends RecyclerView.Adapter<TaskInfoGet2ReAdapter.ViewHolder> {
     private String TAG = this.getClass().getSimpleName();
     private LayoutInflater mInflater;
     private String mtl_name;
     private String item_no;
     private  Context mContext;
     private  List<MtlInfo> mtlInfos;
-    public TaskInfoGet1ReAdapter(Context context, String item_no) {
+    public TaskInfoGet2ReAdapter(Context context, String item_no) {
         this.mInflater = LayoutInflater.from(context);
         this.mContext=context;
         this.item_no=item_no;
@@ -52,7 +49,7 @@ public class TaskInfoGet1ReAdapter extends RecyclerView.Adapter<TaskInfoGet1ReAd
         try {
             mtlInfos = db.selector(MtlInfo.class)
                     .where("item_no","=",item_no)
-                    .and("mtl_type","=","7")
+                    .and("mtl_type","=","8")
                     .findAll();
         } catch (DbException e) {
             e.printStackTrace();
@@ -109,7 +106,7 @@ if(mtlInfos.size()<=position){
 }else{
     //初始化数据
 
-    mtl_name= "7_"+position+".jpg";
+    mtl_name= "8_"+position+".jpg";
     String path   =Environment.getExternalStorageDirectory().getAbsolutePath() +  File.separator +"rzxt/"+item_no+"/upload/"+mtl_name;
     Log.i(TAG,"path"+path);
     File f = new File(path);

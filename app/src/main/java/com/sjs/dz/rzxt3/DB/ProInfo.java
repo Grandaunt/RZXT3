@@ -20,7 +20,7 @@ public class ProInfo {
      * property = "NOT NULL"：添加约束
      */
     @Column(name = "pro_no",isId = true,autoGen = false,property = "NOT NULL")
-    @SerializedName("prdt_type")
+    @SerializedName("prdt_no")
     private String pro_no;
     //项目编号
     @Column(name = "item_no")

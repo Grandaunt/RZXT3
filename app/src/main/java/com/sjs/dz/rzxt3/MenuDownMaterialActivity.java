@@ -4,9 +4,9 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -18,13 +18,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.sjs.dz.rzxt3.DB.MtlInfo;
-import com.sjs.dz.rzxt3.DB.ResultBean;
-import com.sjs.dz.rzxt3.DB.ServerBean;
 import com.sjs.dz.rzxt3.DB.XDBManager;
-import com.sjs.dz.rzxt3.base.MyApplication;
 import com.sjs.dz.rzxt3.utils.FileUtils;
 import com.sjs.dz.rzxt3.utils.ListHUtil;
 
@@ -41,13 +36,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import static com.sjs.dz.rzxt3.LoginActivity.URL;
 
-public class DownMaterialActivity extends AppCompatActivity {
+public class MenuDownMaterialActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
 //    private String URL="http://172.16.10.242:8080";
-    private String item_no="";
+
     private ImageView im_back;
     private ListView listView1,listView2,listView3,listView4,listView5,listView6,listView7,listView8;
     private LinearLayout ly_pro_material_01,ly_pro_material_02,ly_pro_material_03,ly_pro_material_04,ly_pro_material_05,ly_pro_material_06,ly_pro_material_07,ly_pro_material_08;
@@ -85,8 +79,7 @@ public class DownMaterialActivity extends AppCompatActivity {
         });
         //浸透式状态栏
         initWindow();
-        Intent intent = getIntent();
-        item_no=intent.getStringExtra("item_no");
+
         //c初始化控件
         initViews();
         //从数据库获取数据
@@ -108,7 +101,7 @@ public class DownMaterialActivity extends AppCompatActivity {
 
 
     private void initDate() {
-        Log.i(TAG,"mtlInfos.item_no"+item_no);
+//        Log.i(TAG,"mtlInfos.item_no"+item_no);
 //        MyApplication myApplication=new MyApplication();
         DbManager db = x.getDb(XDBManager.getDaoConfig());
         String name=db.getDaoConfig().getDbName();
@@ -116,8 +109,7 @@ public class DownMaterialActivity extends AppCompatActivity {
         try {
             mtlInfos1.clear();
             mtlInfos1 = db.selector(MtlInfo.class)
-                    .where("item_no","=",item_no)
-                    .and("mtl_type","=","1")
+                    .where("mtl_type","=","1")
                     .findAll();
         } catch (DbException e) {
             e.printStackTrace();
@@ -126,8 +118,7 @@ public class DownMaterialActivity extends AppCompatActivity {
         try {
             mtlInfos2.clear();
             mtlInfos2 = db.selector(MtlInfo.class)
-                    .where("item_no","=",item_no)
-                    .and("mtl_type","=","2")
+                    .where("mtl_type","=","2")
                     .findAll();
         } catch (DbException e) {
             e.printStackTrace();
@@ -136,8 +127,7 @@ public class DownMaterialActivity extends AppCompatActivity {
         try {
             mtlInfos3.clear();
             mtlInfos3 = db.selector(MtlInfo.class)
-                    .where("item_no","=",item_no)
-                    .and("mtl_type","=","3")
+                    .where("mtl_type","=","3")
                     .findAll();
         } catch (DbException e) {
             e.printStackTrace();
@@ -146,8 +136,7 @@ public class DownMaterialActivity extends AppCompatActivity {
         try {
             mtlInfos4.clear();
             mtlInfos4 = db.selector(MtlInfo.class)
-                    .where("item_no","=",item_no)
-                    .and("mtl_type","=","4")
+                    .where("mtl_type","=","4")
                     .findAll();
         } catch (DbException e) {
             e.printStackTrace();
@@ -156,8 +145,7 @@ public class DownMaterialActivity extends AppCompatActivity {
         try {
             mtlInfos5.clear();
             mtlInfos5 = db.selector(MtlInfo.class)
-                    .where("item_no","=",item_no)
-                    .and("mtl_type","=","5")
+                    .where("mtl_type","=","5")
                     .findAll();
         } catch (DbException e) {
             e.printStackTrace();
@@ -166,8 +154,7 @@ public class DownMaterialActivity extends AppCompatActivity {
         try {
             mtlInfos6.clear();
             mtlInfos6= db.selector(MtlInfo.class)
-                    .where("item_no","=",item_no)
-                    .and("mtl_type","=","6")
+                    .where("mtl_type","=","6")
                     .findAll();
         } catch (DbException e) {
             e.printStackTrace();
@@ -176,8 +163,7 @@ public class DownMaterialActivity extends AppCompatActivity {
         try {
             mtlInfos7.clear();
             mtlInfos7 = db.selector(MtlInfo.class)
-                    .where("item_no","=",item_no)
-                    .and("mtl_type","=","13")
+                    .where("mtl_type","=","13")
                     .findAll();
         } catch (DbException e) {
             e.printStackTrace();
@@ -186,8 +172,7 @@ public class DownMaterialActivity extends AppCompatActivity {
         try {
             mtlInfos8.clear();
             mtlInfos8 = db.selector(MtlInfo.class)
-                    .where("item_no","=",item_no)
-                    .and("mtl_type","=","8")
+                    .where("mtl_type","=","8")
                     .findAll();
         } catch (DbException e) {
             e.printStackTrace();
@@ -346,49 +331,49 @@ public class DownMaterialActivity extends AppCompatActivity {
         listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lookMtl(mtlInfos1.get(position).getMtl_name(),mtlInfos1.get(position).getMtl_down_path(),mtlInfos1.get(position).getMtl_format());
+                lookMtl(mtlInfos1.get(position).getMtl_name(),mtlInfos1.get(position).getMtl_down_path(),mtlInfos1.get(position).getMtl_format(),mtlInfos1.get(position).getItem_no());
             }
         });
         listView2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lookMtl(mtlInfos2.get(position).getMtl_name(),mtlInfos2.get(position).getMtl_down_path(),mtlInfos2.get(position).getMtl_format());
+                lookMtl(mtlInfos2.get(position).getMtl_name(),mtlInfos2.get(position).getMtl_down_path(),mtlInfos2.get(position).getMtl_format(),mtlInfos2.get(position).getItem_no());
             }
         });
         listView3.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lookMtl(mtlInfos3.get(position).getMtl_name(),mtlInfos3.get(position).getMtl_down_path(),mtlInfos3.get(position).getMtl_format());
+                lookMtl(mtlInfos3.get(position).getMtl_name(),mtlInfos3.get(position).getMtl_down_path(),mtlInfos3.get(position).getMtl_format(),mtlInfos3.get(position).getItem_no());
             }
         });
         listView4.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lookMtl(mtlInfos4.get(position).getMtl_name(),mtlInfos4.get(position).getMtl_down_path(),mtlInfos4.get(position).getMtl_format());
+                lookMtl(mtlInfos4.get(position).getMtl_name(),mtlInfos4.get(position).getMtl_down_path(),mtlInfos4.get(position).getMtl_format(),mtlInfos4.get(position).getItem_no());
             }
         });
         listView5.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lookMtl(mtlInfos5.get(position).getMtl_name(),mtlInfos5.get(position).getMtl_down_path(),mtlInfos5.get(position).getMtl_format());
+                lookMtl(mtlInfos5.get(position).getMtl_name(),mtlInfos5.get(position).getMtl_down_path(),mtlInfos5.get(position).getMtl_format(),mtlInfos5.get(position).getItem_no());
             }
         });
         listView6.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lookMtl(mtlInfos6.get(position).getMtl_name(),mtlInfos6.get(position).getMtl_down_path(),mtlInfos6.get(position).getMtl_format());
+                lookMtl(mtlInfos6.get(position).getMtl_name(),mtlInfos6.get(position).getMtl_down_path(),mtlInfos6.get(position).getMtl_format(),mtlInfos6.get(position).getItem_no());
             }
         });
         listView7.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lookMtl(mtlInfos7.get(position).getMtl_name(),mtlInfos7.get(position).getMtl_down_path(),mtlInfos7.get(position).getMtl_format());
+                lookMtl(mtlInfos7.get(position).getMtl_name(),mtlInfos7.get(position).getMtl_down_path(),mtlInfos7.get(position).getMtl_format(),mtlInfos7.get(position).getItem_no());
             }
         });
         listView8.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                lookMtl(mtlInfos8.get(position).getMtl_name(),mtlInfos8.get(position).getMtl_down_path(),mtlInfos8.get(position).getMtl_format());
+                lookMtl(mtlInfos8.get(position).getMtl_name(),mtlInfos8.get(position).getMtl_down_path(),mtlInfos8.get(position).getMtl_format(),mtlInfos8.get(position).getItem_no());
             }
         });
 
@@ -398,7 +383,7 @@ public class DownMaterialActivity extends AppCompatActivity {
 
     private void SimpleList(ListView listViewi,List<Map<String,Object>> list_map) {
         SimpleAdapter simpleAdapter = new SimpleAdapter(
-                DownMaterialActivity.this,
+                MenuDownMaterialActivity.this,
                 list_map,
                 R.layout.item_material,
                 new String[]{"mtl_format", "mtl_name", "mtl_size","mtl_down_time"},
@@ -427,7 +412,7 @@ public class DownMaterialActivity extends AppCompatActivity {
 
     }
 
-    private void lookMtl(String Dname,String DdownPath,String format) {
+    private void lookMtl(String Dname,String DdownPath,String format,String item_no) {
         String path= Environment.getExternalStorageDirectory().getAbsolutePath()
                 + File.separator +"RZXT/"+item_no+"/"+"/down/";
         if(FileUtils.isFileExist(path+Dname)){
@@ -477,13 +462,13 @@ public class DownMaterialActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            downloadFile(URL+"appDownFile",Dname,path,DdownPath,format);
+            downloadFile(URL+"appDownFile",Dname,path,DdownPath,format,item_no);
         }
 //
 
     }
 
-    private void downloadFile(String url, final String name, String Filepath, final String downPath,final  String format) {
+    private void downloadFile(String url, final String name, String Filepath, final String downPath, final  String format, final String item_no) {
 
         RequestParams requestParams = new RequestParams(url);
         requestParams.addParameter("FILE_NAME", name);
@@ -510,20 +495,20 @@ public class DownMaterialActivity extends AppCompatActivity {
             @Override
             public void onSuccess(File result) {
                 Log.i(TAG,"onSuccess=下载成功");
-                lookMtl(name,downPath,format);
+                lookMtl(name,downPath,format,item_no);
 
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 ex.printStackTrace();
-                Toast.makeText(DownMaterialActivity.this, "下载失败，请检查网络和SD卡", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MenuDownMaterialActivity.this, "下载失败，请检查网络和SD卡", Toast.LENGTH_SHORT).show();
 
             }
 
             @Override
-            public void onCancelled(Callback.CancelledException cex) {
-                Toast.makeText(DownMaterialActivity.this, "下载失败，请检查网络和SD卡", Toast.LENGTH_SHORT).show();
+            public void onCancelled(CancelledException cex) {
+                Toast.makeText(MenuDownMaterialActivity.this, "下载失败，请检查网络和SD卡", Toast.LENGTH_SHORT).show();
             }
 
             @Override

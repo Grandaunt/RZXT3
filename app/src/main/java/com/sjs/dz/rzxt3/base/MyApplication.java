@@ -1,12 +1,15 @@
 package com.sjs.dz.rzxt3.base;
 
 import android.app.Application;
+import android.app.Service;
 import android.graphics.Color;
+import android.os.Vibrator;
 import android.util.Log;
 
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.sjs.dz.rzxt3.loader.XUtilsImageLoader;
+import com.sjs.dz.rzxt3.service.LocationService;
 
 import org.xutils.DbManager;
 import org.xutils.db.table.TableEntity;
@@ -27,11 +30,9 @@ import cn.finalteam.galleryfinal.ThemeConfig;
 public class MyApplication extends Application {
     private static MyApplication instance;
     private static FunctionConfig mFunctionConfig;
-    private static FunctionConfig.Builder mFunctionConfigBuilder;
-    private DbManager.DaoConfig daoConfig;
-    public DbManager.DaoConfig getDaoConfig() {
-        return daoConfig;
-    }
+    public static FunctionConfig.Builder mFunctionConfigBuilder;
+    public LocationService locationService;
+    public Vibrator mVibrator;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -39,51 +40,20 @@ public class MyApplication extends Application {
         instance = this;
 //      initImageLoader(getApplicationContext());
         initGalleryFinal();
-        // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
-        SDKInitializer.initialize(this);
-        //自4.3.0起，百度地图SDK所有接口均支持百度坐标和国测局坐标，用此方法设置您使用的坐标类型.
-        //包括BD09LL和GCJ02两种坐标，默认是BD09LL坐标。
-        SDKInitializer.setCoordType(CoordType.BD09LL);
-/**
- * 初始化DaoConfig配置
- */
-        daoConfig = new DbManager.DaoConfig()
-//设置数据库名，默认xutils.db
-            .setDbName("rzxt3.db")
-            //设置数据库路径，默认存储在app的私有目录
-            .setDbDir(new File("/mnt/sdcard/"))
-            //设置数据库的版本号
-            .setDbVersion(5)
-            //设置数据库打开的监听
-            .setDbOpenListener(new DbManager.DbOpenListener() {
-                @Override
-                public void onDbOpened(DbManager db) {
-                    //开启数据库支持多线程操作，提升性能，对写入加速提升巨大
-                    db.getDatabase().enableWriteAheadLogging();
-                }
-            })
-            //设置数据库更新的监听
-            .setDbUpgradeListener(new DbManager.DbUpgradeListener() {
-                @Override
-                public void onUpgrade(DbManager db, int oldVersion, int newVersion) {
+        locationService = new LocationService(getApplicationContext());
+        mVibrator =(Vibrator)getApplicationContext().getSystemService(Service.VIBRATOR_SERVICE);
+        SDKInitializer.initialize(getApplicationContext());
 
-                }
-            })
-            //设置表创建的监听
-            .setTableCreateListener(new DbManager.TableCreateListener() {
-                @Override
-                public void onTableCreated(DbManager db, TableEntity<?> table){
-                    Log.i("JAVA", "onTableCreated：" + table.getName());
 
-                }
-            });
-    //设置是否允许事务，默认true
-//    .setAllowTransaction(true)
-
+        // 全局默认信任所有https域名 或 仅添加信任的https域名
+        // 使用RequestParams#setHostnameVerifier(...)方法可设置单次请求的域名校验
+//        x.Ext.setDefaultHostnameVerifier(new HostnameVerifier() {
+//            @Override
+//            public boolean verify(String hostname, SSLSession session) {
+//                return true;
+//            }
+//        });
     }
-
-
-
 
     /***
      * 初始化GalleryFinal
@@ -94,7 +64,6 @@ public class MyApplication extends Application {
         //ThemeConfig.CYAN
         ThemeConfig theme = new ThemeConfig.Builder()
                 //标题栏背景颜色
-
                 .setTitleBarBgColor(Color.rgb(0x35, 0x98, 0xdb))
                 //标题栏文本字体颜色
                 .setTitleBarTextColor(Color.rgb(0xff,0xff,0xff))
@@ -110,10 +79,10 @@ public class MyApplication extends Application {
         // mFunctionConfigBuilder.setSelected(mPhotoList);//添加过滤集合
         //配置功能
         mFunctionConfig = mFunctionConfigBuilder
-                .setEnableEdit(false)//开启编辑功能
-                .setEnableCamera(false)//开启相机功能
-                .setEnableCrop(false)//开启裁剪功能
-                .setEnableRotate(false)//开启旋转功能
+                .setEnableEdit(true)//开启编辑功能
+                .setEnableCamera(true)//开启相机功能
+                .setEnableCrop(true)//开启裁剪功能
+                .setEnableRotate(true)//开启旋转功能
                 .setCropSquare(true)//裁剪正方形
                 .setEnablePreview(true)//是否开启预览功能
                 .setRotateReplaceSource(true)//配置选择图片时是否替换原始图片，默认不替换

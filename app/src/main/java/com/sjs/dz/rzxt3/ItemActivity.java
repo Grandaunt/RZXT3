@@ -20,6 +20,7 @@ import android.widget.SimpleAdapter;
 
 import com.sjs.dz.rzxt3.DB.ItemInfo;
 import com.sjs.dz.rzxt3.DB.PactInfo;
+import com.sjs.dz.rzxt3.DB.XDBManager;
 import com.sjs.dz.rzxt3.base.MyApplication;
 
 import org.xutils.DbManager;
@@ -55,8 +56,9 @@ public class ItemActivity extends AppCompatActivity {
         initWindow();
         listView=(ListView)findViewById(R.id.item_listview);
         Intent intent = getIntent();
-        MyApplication myApplication=new MyApplication();
-        DbManager db = x.getDb(myApplication.getDaoConfig());
+//        MyApplication myApplication=new MyApplication();
+//        DbManager db = x.getDb(myApplication.getDaoConfig());
+        DbManager db = x.getDb(XDBManager.getDaoConfig());
         List<ItemInfo> itemInfos = new ArrayList<ItemInfo>();
         try {
             itemInfos = db.selector(ItemInfo.class)
@@ -74,11 +76,30 @@ public class ItemActivity extends AppCompatActivity {
             //1.准备好数据源，循环为listView添加数据（数据源的准备工作，这里是模拟从SQLite中查询数据）
             for(int i=0;i<itemInfos.size();i++){
                 Map<String,Object> items = new HashMap<String, Object>(); //创建一个键值对的Map集合，用来存放名字和头像
+                //项目编号
                 items.put("item_no", itemInfos.get(i).getItem_no());
-                items.put("item_status", itemInfos.get(i).getItem_status());
+                //项目状态（0：待处理，1:待上传，2：已上传）
+                if(itemInfos.get(i).getItem_status().equals("2")) {
+                    items.put("item_status","已上传");
+                }
+                else {
+                    items.put("item_status","待上传");
+                }
+                //产品类型（）
                 items.put("pro_type", itemInfos.get(i).getPro_type());
-                items.put("rz_scope", itemInfos.get(i).getRz_scope());
+                //认证范围（013：种植，014：养殖，015：加工）
+                if(itemInfos.get(i).getRz_scope().equals("013")) {
+                    items.put("rz_scope","种植" );
+                }
+                else  if(itemInfos.get(i).getRz_scope().equals("014")) {
+                    items.put("rz_scope","养殖" );
+                }
+                else {
+                    items.put("rz_scope","加工" );
+                }
+                //认证类型
                 items.put("rz_type", itemInfos.get(i).getRz_type());
+                //检查类型
                 items.put("check_type", itemInfos.get(i).getCheck_type());
                 list_map.add(items);   //把这个存放好数据的Map集合放入到list中，这就完成类数据源的准备工作
             }

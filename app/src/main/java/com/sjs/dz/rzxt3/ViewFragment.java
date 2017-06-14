@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,10 +41,21 @@ import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.utils.OpenClientUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.sjs.dz.rzxt3.DB.ItemInfo;
+import com.sjs.dz.rzxt3.DB.MtlInfo;
 import com.sjs.dz.rzxt3.DB.PactInfo;
+import com.sjs.dz.rzxt3.DB.ProInfo;
+import com.sjs.dz.rzxt3.DB.ResultBean;
+import com.sjs.dz.rzxt3.DB.ServerBean;
+import com.sjs.dz.rzxt3.DB.UserInfo;
+import com.sjs.dz.rzxt3.DB.XDBManager;
 import com.sjs.dz.rzxt3.base.MyApplication;
 import org.xutils.DbManager;
 import org.xutils.common.Callback;
+import org.xutils.common.util.KeyValue;
+import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
@@ -84,6 +96,10 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
     // 百度大厦坐标
     double mLat2 = 40.056858;
     double mLon2 = 116.308194;
+    private String ACC,PASSWORD;
+    private SharedPreferences sharedPrefs;
+    private ServerBean serverBean;
+    private  DbManager db;
     public ViewFragment() {
         // Required empty public constructor
     }
@@ -113,6 +129,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view, container, false);
+        sharedPrefs = getActivity().getSharedPreferences("RZ3Share", Context.MODE_PRIVATE);
         initViews(view);
         initData();
         setView();
@@ -166,8 +183,8 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
 
     //初始化数据
     private void initData() {
-        myApplication=new MyApplication();
-        DbManager db = x.getDb(myApplication.getDaoConfig());
+//        myApplication=new MyApplication();
+         db = x.getDb(XDBManager.getDaoConfig());
         pactInfos = new ArrayList<PactInfo>();
         try {
             pactInfos = db.findAll(PactInfo.class);
@@ -181,7 +198,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
         }
         else{
             for (int i=0;i<pactInfos.size();i++)
-            Log.i(TAG,pactInfos.get(i).getPact_no());
+                Log.i(TAG,pactInfos.get(i).getPact_no());
         }
     }
 
@@ -237,7 +254,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
                 break;
             case R.id.tv_pact_no:
                 Log.i(TAG,"onClick.tv_pact_no");
-               onclickItem();
+                onclickItem();
                 break;
             case R.id.tv_com_con_name:
                 Log.i(TAG,"onClick.tv_com_con_name");
@@ -272,7 +289,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
                 break;
         }
     }
-//合同资料上传
+    //合同资料上传
     private void upload() {
         RequestParams params = new RequestParams(URL+"/makesure");
 
@@ -283,8 +300,30 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
+
                 Log.i(TAG, "result："+result);
                 //成功则改变任务状态 失败则Toast
+                Log.i(TAG,"result="+result);
+                Gson gson = new Gson();
+                java.lang.reflect.Type type = new TypeToken<ResultBean>() {}.getType();
+                ResultBean bean = gson.fromJson(result, type);
+//                serverBean = gson.fromJson(result, ServerBean.class);
+                String err = bean.getErr();
+                if (err.equals("0")) {
+                    //上传成功 改变合同状态
+                    try {
+
+                        WhereBuilder whereBuilder = WhereBuilder.b();
+                        whereBuilder.and("pact_no","=",tv_pact_no.getText().toString());
+                        db.update(ItemInfo.class,whereBuilder,
+                                new KeyValue("pact_status",2));//对User表中复合whereBuilder所表达的条件的记录更新email和mobile
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Toast.makeText(getActivity(),"项目资料缺失",Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -303,6 +342,11 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
             }
 
         });
+        //刷新数据
+                        ACC=sharedPrefs.getString("USER_ACCOUNT", "110");
+                        PASSWORD=sharedPrefs.getString("PASSWORD", "110");
+                        LoginHttp(ACC,PASSWORD);
+
     }
     //打开合同详情
     private void onclickItem() {
@@ -432,6 +476,90 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
         });
 
         builder.create().show();
+
+    }
+    //刷新数据
+    private void LoginHttp(String acc,String password) {
+        RequestParams params = new RequestParams(URL+"appLogin");
+        params.addBodyParameter("userAccount",acc);
+        params.addParameter("passWord",password);
+        Log.i(TAG,"params="+params);
+        x.http().post(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Log.i(TAG,"result="+result);
+                Gson gson = new Gson();
+                java.lang.reflect.Type type = new TypeToken<ServerBean>() {}.getType();
+                serverBean = gson.fromJson(result, type);
+//                serverBean = gson.fromJson(result, ServerBean.class);
+                String err = serverBean.getErr();
+                String msg = serverBean.getMsg();
+                if (err.equals("0")) {
+                    //解析成功
+                    Log.i(TAG, "解析成功：" + msg);
+                    UserInfo user = serverBean.getUser();
+                    SharedPreferences.Editor editor = sharedPrefs.edit();
+                    editor.putString("AUTH_TOKEN", user.getAUTH_TOKEN());
+                    editor.putString("USER_ACCOUNT", user.getUSER_ACCOUNT());
+                    editor.putString("USER_NAME", user.getUSER_NAME());
+                    editor.putString("USER_IDE", user.getUSER_IDE());
+                    editor.putString("USER_TEL", user.getUSER_TEL());
+                    editor.putString("USER_DEPT_NAME", user.getUSER_DEPT_NAME());
+                    editor.putString("PASSWORD", PASSWORD);
+                    editor.putString("USER_DEPT_ORG_CODE", user.getUSER_DEPT_ORG_CODE());
+                    editor.commit();
+                    List<PactInfo> pactInfos = new ArrayList<PactInfo>();
+                    List<ItemInfo> itemInfos = new ArrayList<ItemInfo>();
+                    List<ProInfo>  proInfos  = new ArrayList<ProInfo>();
+                    List<MtlInfo>  mtlInfos  = new ArrayList<MtlInfo>();
+                    pactInfos = serverBean.getHtList();
+                    itemInfos = serverBean.getXmList();
+                    proInfos  = serverBean.getCpList();
+                    mtlInfos  = serverBean.getMtList();
+                    Log.i(TAG, "pactInfos：" + pactInfos);
+                    Log.i(TAG, "mtInfos：" + mtlInfos);
+                    Log.i(TAG, "proInfos：" + proInfos);
+                    Log.i(TAG, "itemInfos：" + itemInfos);
+                    try {
+                        db.saveOrUpdate(pactInfos);
+                    } catch (DbException ex) {
+                        ex.printStackTrace();
+                    }
+                    try {
+
+                        db.saveOrUpdate(itemInfos);
+                    } catch (DbException ex) {
+                        ex.printStackTrace();
+                    }
+                    try {
+
+                        db.saveOrUpdate(proInfos);
+
+                    } catch (DbException ex) {
+                        ex.printStackTrace();
+                    }
+                    try {
+                        db.saveOrUpdate(mtlInfos);
+
+                    } catch (DbException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+//                解析result
+                Intent intent = new Intent(getActivity(),MyActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+            @Override
+            public void onFinished() {
+            }
+        });
 
     }
     // TODO: Rename method, update argument and hook method into UI event

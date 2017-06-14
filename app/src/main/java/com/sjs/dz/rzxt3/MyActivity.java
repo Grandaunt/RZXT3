@@ -1,26 +1,17 @@
 package com.sjs.dz.rzxt3;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -32,36 +23,37 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.navi.BaiduMapAppNotSupportNaviException;
+import com.baidu.mapapi.navi.BaiduMapNavigation;
+import com.baidu.mapapi.navi.NaviParaOption;
+import com.baidu.mapapi.utils.OpenClientUtil;
 import com.sjs.dz.rzxt3.Adapter.MyFragmentAdapter;
 import com.sjs.dz.rzxt3.DB.PactInfo;
+import com.sjs.dz.rzxt3.DB.ServerBean;
+import com.sjs.dz.rzxt3.DB.XDBManager;
 import com.sjs.dz.rzxt3.base.MyApplication;
+import com.sjs.dz.rzxt3.service.LocationService;
 import com.sjs.dz.rzxt3.utils.DepthPageTransformer;
-import com.sjs.dz.rzxt3.utils.FileUtils;
+import com.sjs.dz.rzxt3.utils.checkUpdateUtils;
 import com.sjs.dz.rzxt3.view.ActionSheetDialog;
 
 import org.xutils.DbManager;
-import org.xutils.common.Callback;
 import org.xutils.ex.DbException;
-import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
-import org.xutils.view.annotation.ViewInject;
 import org.xutils.x;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import cn.finalteam.galleryfinal.GalleryFinal;
 import cn.finalteam.galleryfinal.model.PhotoInfo;
+import in.srain.cube.views.ptr.PtrFrameLayout;
 import me.relex.circleindicator.CircleIndicator;
-
-import static com.sjs.dz.rzxt3.LoginActivity.URL;
 
 public class MyActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener ,ViewPager.OnPageChangeListener , ViewFragment.OnFragmentInteractionListener {
@@ -77,13 +69,30 @@ public class MyActivity extends AppCompatActivity
     private final int REQUEST_CODE_CROP = 1002;
     private final int REQUEST_CODE_EDIT = 1003;
     private List<PactInfo> pactInfos = null;
-    private String userAccount="",nowVersion="";
+    private String userAccount="",nowVersion="",passWord="";
+    private ImageView headicon;
     private ProgressDialog progressDialog,pDialog;
+    private  Toolbar toolbar;
+    private PtrFrameLayout mPtrFrame;
+    private ServerBean serverBean;
+    private LocationService locationService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_main);
+        //浸透式状态栏
+        initWindow();
+        initView();
+        //初始化数据
+        initData();
+//       getGPSTIMEStr();
+
+
+    }
+
+
+    private void initView() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         toolbar.setTitle("合同");//设置主标题
 //        toolbar.setTitleTextColor(Color.rgb(8, 8, 8));
 //        toolbar.setDrawingCacheBackgroundColor(Color.rgb(8, 8, 8));
@@ -92,8 +101,6 @@ public class MyActivity extends AppCompatActivity
 //        toolbar.setNavigationIcon(R.mipmap.ic_back);
         setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true); //启用返回按钮
-        //浸透式状态栏
-        initWindow();
         //侧边栏
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -103,10 +110,8 @@ public class MyActivity extends AppCompatActivity
         //获取侧边栏头部view
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
         View headerView = navigationView.getHeaderView(0);
-        ImageView headicon = (ImageView)headerView.findViewById(R.id.headicon);
+        headicon = (ImageView)headerView.findViewById(R.id.headicon);
         //给侧边栏头部username，phone赋值，头像添加点击事件
 
 
@@ -115,42 +120,20 @@ public class MyActivity extends AppCompatActivity
         TextView usernametv = (TextView)headerView.findViewById(R.id.username);
         usernametv.setText(sharedPrefs.getString("USER_NAME", "110"));
         //查询并显示用户头像
-        String drawablepath= Environment.getExternalStorageDirectory().getAbsolutePath()
-                + File.separator +"RZXT/user.png";
-//        if(drawablepath==null||drawablepath.equals("")) {
-//            drawablepath="R.drawable.sym_def_headicon";
-//            ImageOptions options = new ImageOptions.Builder()
-//                    //设置加载过程中的图片
-//                    .setLoadingDrawableId(R.mipmap.ic_launcher)
-////设置加载失败后的图片
-//                    .setFailureDrawableId(R.mipmap.ic_launcher)
-//                    //设置圆形
-//                    .setCircular(true)
-//                    //某些手机拍照时图片自动旋转，设置图片是否自动旋转为正
-//                    .setAutoRotate(true)
-//                    //等比例缩放居中显示
-//                    .setImageScaleType(ImageView.ScaleType.FIT_XY)
-//                    .build();
-//            x.image().bind(headicon, drawablepath, options);
-//
-//        }else{
-            ImageOptions options = new ImageOptions.Builder()
-                    //设置圆形
-                    .setCircular(true)
-                    //设置加载过程中的图片
-                    .setLoadingDrawableId(R.mipmap.ic_launcher)
+        String drawablepath= sharedPrefs.getString("USER_ICON","");
+        ImageOptions options = new ImageOptions.Builder()
+                //设置圆形
+                .setCircular(true)
+                //设置加载过程中的图片
+                .setLoadingDrawableId(R.mipmap.ic_launcher)
 //设置加载失败后的图片
-                    .setFailureDrawableId(R.mipmap.ic_launcher)
-                    //某些手机拍照时图片自动旋转，设置图片是否自动旋转为正
-                    .setAutoRotate(true)
-                    //等比例缩放居中显示
-                    .setImageScaleType(ImageView.ScaleType.FIT_XY)
-                    .build();
-            x.image().bind(headicon, drawablepath, options);
-//        }
-//
-
-
+                .setFailureDrawableId(R.mipmap.ic_launcher)
+                //某些手机拍照时图片自动旋转，设置图片是否自动旋转为正
+                .setAutoRotate(true)
+                //等比例缩放居中显示
+                .setImageScaleType(ImageView.ScaleType.FIT_XY)
+                .build();
+        x.image().bind(headicon, drawablepath, options);
 
         headicon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,19 +143,39 @@ public class MyActivity extends AppCompatActivity
             }
         });
 
-
-
-
         viewPager=(ViewPager) findViewById(R.id.viewpager);
         //指示器
         indicator = (CircleIndicator) findViewById(R.id.indicator);
-
-
-        //初始化数据
-        initData();
-
+//        pullRefresh();
 
     }
+
+    private void initData() {
+//        myApplication=new MyApplication();
+//        db = x.getDb(myApplication.getDaoConfig());
+        DbManager db = x.getDb(XDBManager.getDaoConfig());
+        String name=db.getDaoConfig().getDbName().toString();
+        Log.i(TAG,"initData.db_addr"+name);
+
+        try {
+//           pactInfos = db.findAll(PactInfo.class);
+            pactInfos = db.selector(PactInfo.class)
+                    .where("pact_status","=",0)
+                    .findAll();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+        if(pactInfos == null || pactInfos.size() == 0){
+            return;//请先调用dbAdd()方法
+        }
+        else{
+            Log.i(TAG,"pactInfos.size"+pactInfos.size());
+            initFragment(pactInfos);
+        }
+
+    }
+
 
     //头像选择
     private void showSheetDialog() {
@@ -215,22 +218,13 @@ public class MyActivity extends AppCompatActivity
 
             if (resultList != null) {
                 //获取图片路径
-                String photoPath= Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator +"RZXT/";
-                Bitmap Bitmap = BitmapFactory.decodeFile(resultList.get(0).getPhotoPath());
-                //将投向另存为 Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator +"RZXT/user.png";
-
-                FileUtils.saveBitmap(photoPath,"user.PNG",Bitmap);
-                //获取NavigationView父布局
-                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-                View headerView = navigationView.getHeaderView(0);
-                ImageView headicon = (ImageView)headerView.findViewById(R.id.headicon);
+                String photoPath= resultList.get(0).getPhotoPath();
                 x.image().bind(headicon,photoPath, options);
 
                 //存储头像路径到数据库
-//                Intent i = getIntent();
-//                UserRepo repo = new UserRepo(MainActivity.this);
-//                repo.addusericon(i.getStringExtra("usernameinfo"), resultList.get(0).getPhotoPath());
-
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putString("USER_ICON",photoPath);
+                editor.commit();
 
             }
         }
@@ -242,33 +236,13 @@ public class MyActivity extends AppCompatActivity
     };
 
 
-    private void initData() {
-        myApplication=new MyApplication();
-        db = x.getDb(myApplication.getDaoConfig());
-
-        try {
-           pactInfos = db.findAll(PactInfo.class);
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-
-        if(pactInfos == null || pactInfos.size() == 0){
-            return;//请先调用dbAdd()方法
-        }
-        else{
-            Log.i(TAG,"pactInfos.size"+pactInfos.size());
-                    initFragment(pactInfos);
-        }
-
-    }
-
     private void initFragment(List<PactInfo> pactInfos) {
         List<Fragment> list = new ArrayList<Fragment>();
         for(int i=0;i<pactInfos.size();i++){
-            ViewFragment fragment0= new ViewFragment();
+//            ViewFragment fragment0= new ViewFragment();
+            Fragment fragment0 = ViewFragment.newInstance(i);
             list.add(fragment0);
         }
-
 
 //        viewPager.addOnPageChangeListener((ViewPager.OnPageChangeListener) this);//设置页面切换时的监听器(可选，用了之后要重写它的回调方法处理页面切换时候的事务)
         viewPager.setAdapter(new MyFragmentAdapter(getSupportFragmentManager(), list));
@@ -327,199 +301,43 @@ public class MyActivity extends AppCompatActivity
             Intent intent = new Intent(MyActivity.this,ClearActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_updateVersion) {
-            checkUpdate();
+            checkUpdateUtils.checkUpdate(MyActivity.this);
 
         } else if (id == R.id.nav_about) {
             Intent intent = new Intent(MyActivity.this,AboutActivity.class);
             startActivity(intent);
 
         } else if (id == R.id.nav_out) {
-            SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putString("AUTH_TOKEN","");
-            editor.commit();
-            System.exit(0);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MyActivity.this);
+            builder.setMessage("您确认退出应用？");
+            builder.setTitle("提示");
+            builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences.Editor editor = sharedPrefs.edit();
+                    editor.putString("AUTH_TOKEN","error");
+                    editor.commit();
+                    System.exit(0);
+
+                }
+            });
+
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            builder.create().show();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    /**
-     * 下载更新,
-     */
-    //http://172.16.10.242:8080/MVNFHM/appInterface/isUpdate?userAccount=11000&appVersion=0
-    protected void checkUpdate() {
-        // TODO Auto-generated method stub
-        userAccount=sharedPrefs.getString("USER_ACCOUNT", "110");
-        try {
-            PackageInfo packageInfo = MyActivity.this.getPackageManager().getPackageInfo(
-                    MyActivity.this.getPackageName(), 0);
-            nowVersion = packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        proDialogShow(MyActivity.this, "正在查询...");
-        RequestParams params = new RequestParams(URL+"/appCheckUpdate");
-        params.addBodyParameter("userAccount", userAccount);
-        params.addBodyParameter("appVersion", nowVersion);
-        Log.i(TAG,params+"");
-        x.http().get(params, new Callback.CommonCallback<String>() {
 
-
-            @Override
-            public void onCancelled(CancelledException arg0) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onError(Throwable arg0, boolean arg1) {
-                // TODO Auto-generated method stub
-                PDialogHide();
-                System.out.println("提示网络错误");
-            }
-
-            @Override
-            public void onFinished() {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void onSuccess(String arg0) {
-                // TODO Auto-generated method stub
-                PDialogHide();
-
-                if (arg0.equals("002")) {
-                    Toast.makeText(MyActivity.this,"当前版本为最新版本",Toast.LENGTH_SHORT).show();
-                    Log.i(TAG,"当前版本为最新，不用更新");
-                } else {
-                    // 不同，弹出更新提示对话框
-                    setUpDialog(nowVersion, arg0, "最新版");
-                }
-            }
-        });
-    }
-
-    /**
-     *
-     * @param versionname
-     *            地址中版本的名字
-     * @param downloadurl
-     *            下载包的地址
-     * @param desc
-     *            版本的描述
-     */
-    protected void setUpDialog(String versionname, final String downloadurl,
-                               String desc) {
-        // TODO Auto-generated method stub
-        AlertDialog dialog = new AlertDialog.Builder(MyActivity.this).setCancelable(false)
-                .setTitle("下载" + versionname + "版本").setMessage(desc)
-                .setNegativeButton("取消", null)
-                .setPositiveButton("下载", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        // TODO Auto-generated method stub
-                        setDownLoad(downloadurl);
-                    }
-                }).create();
-        dialog.show();
-    }
-
-    /**
-     * 下载包
-     *
-     * @param downloadurl
-     *            下载的url
-     *
-     */
-    @SuppressLint("SdCardPath")
-    protected void setDownLoad(String downloadurl) {
-        // TODO Auto-generated method stub
-        RequestParams params = new RequestParams(downloadurl);
-        params.setAutoRename(true);//断点下载
-
-//        params.setSaveFilePath("/mnt/sdcard/rzxt.apk");
-        params.setSaveFilePath(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +"RZXT/rzxt.apk");
-        x.http().get(params, new Callback.ProgressCallback<File>() {
-
-            @Override
-            public void onCancelled(CancelledException arg0) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void onError(Throwable arg0, boolean arg1) {
-                // TODO Auto-generated method stub
-                if(progressDialog!=null && progressDialog.isShowing()){
-                    progressDialog.dismiss();
-                }
-                System.out.println("提示更新失败");
-            }
-
-            @Override
-            public void onFinished() {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void onSuccess(File arg0) {
-                // TODO Auto-generated method stub
-                if(progressDialog!=null && progressDialog.isShowing()){
-                    progressDialog.dismiss();
-                }
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator +"RZXT/", "rzxt.apk")),
-                        "application/vnd.android.package-archive");
-                startActivity(intent);
-            }
-
-            @Override
-            public void onLoading(long arg0, long arg1, boolean arg2) {
-                // TODO Auto-generated method stub
-                progressDialog.setMax((int)arg0);
-                progressDialog.setProgress((int)arg1);
-            }
-
-            @Override
-            public void onStarted() {
-                // TODO Auto-generated method stub
-                System.out.println("开始下载");
-                progressDialog = new ProgressDialog(MyActivity.this);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);//设置为水平进行条
-                progressDialog.setMessage("正在下载中...");
-                progressDialog.setProgress(0);
-                progressDialog.show();
-            }
-
-            @Override
-            public void onWaiting() {
-                // TODO Auto-generated method stub
-
-            }
-        });
-    }
-
-    private void proDialogShow(Context context, String msg) {
-        pDialog = new ProgressDialog(context);
-        pDialog.setMessage(msg);
-        // pDialog.setCancelable(false);
-        pDialog.show();
-    }
-
-    private void PDialogHide() {
-        try {
-            if (pDialog != null && pDialog.isShowing()) {
-                pDialog.dismiss();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     //浸入式状态栏
     @TargetApi(19)
     private void initWindow() {
@@ -550,4 +368,48 @@ public class MyActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+//    public void getGPSTIMEStr() {
+//        // -----------location config ------------
+//        locationService = ((MyApplication)getApplication()).locationService;
+//        //获取locationservice实例，建议应用中只初始化1个location实例，然后使用，可以参考其他示例的activity，都是通过此种方式获取locationservice实例的
+//        locationService.registerListener(mListener);
+//        //注册监听
+//        int type = getIntent().getIntExtra("from", 0);
+//        if (type == 0) {
+//            locationService.setLocationOption(locationService.getDefaultLocationClientOption());
+//        } else if (type == 1) {
+//            locationService.setLocationOption(locationService.getOption());
+//        }
+//        Log.i(TAG, "locationService.start()" );
+//        locationService.start();// 定位SDK
+//
+//    }
+//    /*****
+//     *
+//     * 定位结果回调，重写onReceiveLocation方法，可以直接拷贝如下代码到自己工程中修改
+//     *
+//     */
+//    private BDLocationListener mListener = new BDLocationListener() {
+//
+//        @Override
+//        public void onReceiveLocation(BDLocation location) {
+//            // TODO Auto-generated method stub
+//            SimpleDateFormat formatter   =   new   SimpleDateFormat   ("yyyy年MM月dd日   HH:mm:ss");
+//            Date curDate =  new Date(System.currentTimeMillis());
+//            if (null != location && location.getLocType() != BDLocation.TypeServerError) {
+//                SharedPreferences.Editor editor = sharedPrefs.edit();
+//                editor.putString("mLat1", String.valueOf(location.getLatitude()));
+//                editor.putString("mLon1", String.valueOf(location.getLongitude()));
+//                editor.putString("GPSTIMEStr",location.getAddrStr()+formatter.format(curDate));
+//
+//                editor.commit();
+//
+//
+//            }
+//        }
+//
+//        public void onConnectHotSpotMessage(String s, int i){
+//        }
+//    };
+
 }

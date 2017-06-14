@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class ServerBean {
     //0:成功，1：失败
-    private int error;
+    private String err;
     private String msg;
     private UserInfo user;
     private List<PactInfo> htList;
@@ -24,12 +24,12 @@ public class ServerBean {
 
     private List<MtlInfo> mtList;
 
-    public int getError() {
-        return error;
+    public String getErr() {
+        return err;
     }
 
-    public void setError(int error) {
-        this.error = error;
+    public void setErr(String error) {
+        this.err = error;
     }
 
     public String getMsg() {
@@ -75,7 +75,7 @@ public class ServerBean {
     @Override
     public String toString() {
         return "ServerBean{" +
-                "error=" + error +
+                "err=" + err +
                 ", msg='" + msg + '\'' +
                 ", user=" + user +
                 ", htList=" + htList +
@@ -85,8 +85,8 @@ public class ServerBean {
                 '}';
     }
 
-    public ServerBean(int error, String msg,UserInfo user,List<PactInfo> htList,List<ProInfo> cpList,List<ItemInfo> xmList,List<MtlInfo> mtList) {
-        this.error = error;
+    public ServerBean(String err, String msg,UserInfo user,List<PactInfo> htList,List<ProInfo> cpList,List<ItemInfo> xmList,List<MtlInfo> mtList) {
+        this.err = err;
         this.msg = msg;
         this.user = user;
         this.htList = htList;

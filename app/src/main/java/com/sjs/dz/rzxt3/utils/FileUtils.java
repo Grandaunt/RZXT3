@@ -31,7 +31,7 @@ public class FileUtils {
 				}
 
 				File f = new File(bitmapstr, PHTOTONAME);
-				Log.i("FileUtils", bitmapstr + PHTOTONAME + ".JPG");
+				Log.i("FileUtils", bitmapstr + PHTOTONAME );
 
 				//如果同名照片存在则删除
 				if (f.exists()) {
