@@ -37,18 +37,12 @@
     <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
-
-
     <!-- 不是SDK需要的权限，是示例中的后台唤醒定位需要的权限 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-
     <!-- 读取缓存数据 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <!-- 更改设置 -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-
     <!-- 锁屏弹窗权限 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_LOGS" >
@@ -91,9 +85,10 @@
             </intent-filter>
         </service>
         <activity
-            android:name=".MyActivity"
+            android:name=".LoadingActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:windowSoftInputMode="adjustPan|stateHidden">
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -109,11 +104,11 @@
             android:name=".AboutActivity"
             android:label="@string/title_activity_pact"
             android:theme="@style/AppTheme.NoActionBar" />
-         <!--<activity-->
-         <!--android:name=".MyActivity"-->
-         <!--android:label="@string/title_activity_pact"-->
-         <!--android:theme="@style/AppTheme.NoActionBar">-->
-         <!--</activity>-->
+         <activity
+         android:name=".MyActivity"
+         android:label="@string/title_activity_pact"
+         android:theme="@style/AppTheme.NoActionBar">
+         </activity>
         <activity
             android:name=".ItemActivity"
             android:theme="@style/AppTheme.NoActionBar" />

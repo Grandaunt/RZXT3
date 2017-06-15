@@ -55,7 +55,7 @@ public class TaskInfoGet3ReAdapter extends RecyclerView.Adapter<TaskInfoGet3ReAd
             e.printStackTrace();
         }
         if(mtlInfos == null || mtlInfos.size() == 0){
-            Log.i(TAG,"TaskInfoGet1ReAdapter:mtlInfos.size"+mtlInfos.size()+"未查到数据");
+            Log.i(TAG,"TaskInfoGet3ReAdapter:mtlInfos.size"+mtlInfos.size()+"未查到数据");
         }
         else {
             Log.i(TAG, "mtlInfos.size" + mtlInfos.size());

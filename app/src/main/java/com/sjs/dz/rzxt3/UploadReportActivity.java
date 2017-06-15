@@ -74,6 +74,7 @@ public class UploadReportActivity extends AppCompatActivity  {
     private ImageView im_back;
     private Button btn_upload;
     private String item_no="",mtl_type="0",mtl_name="",GPSTIMEStr = "",mtl_time="";
+    private int mtl_no;
     private boolean isVisible = true;
     private LinearLayoutManager mLayoutManager;
     private TaskInfoGet1ReAdapter mGetAdapter1;
@@ -86,10 +87,13 @@ public class UploadReportActivity extends AppCompatActivity  {
     private DbManager db;
     private ProgressDialog UpDialog;
     private SharedPreferences sharedPrefs;
+    private LocationService locationService;
 
     private int Upos;
     private boolean Uflag=true;
-//    private String URL="http://172.16.10.242:8080";
+    private   SimpleDateFormat formatter;
+    private  Date curDate;
+    //    private String URL="http://172.16.10.242:8080";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +116,9 @@ public class UploadReportActivity extends AppCompatActivity  {
         db = x.getDb(XDBManager.getDaoConfig());
         initViews();
         //获取地理位置开始
-
+         formatter   =   new   SimpleDateFormat   ("yyyy年MM月dd日   HH:mm:ss");
+         curDate =  new Date(System.currentTimeMillis());
+        getGPSTIMEStr();
 
     }
 
@@ -237,7 +243,7 @@ public class UploadReportActivity extends AppCompatActivity  {
                                     @Override
                                     public void onClick(int which) {
                                         //带配置
-                                        String str=Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "RZXT/" + item_no + "/upload/9_" + Upos+".jpg";
+                                        String str=Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "RZXT/" + item_no + "/upload/7_" + Upos+".jpg";
                                         Log.i(TAG,"查看str="+str);
                                         GalleryFinal.openEdit(REQUEST_CODE_EDIT, str,mOnHanlderResultCallback);
 
@@ -294,7 +300,7 @@ public class UploadReportActivity extends AppCompatActivity  {
                                     @Override
                                     public void onClick(int which) {
                                         //带配置
-                                        String str=Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "RZXT/" + item_no + "/upload/9_" + Upos+".jpg";
+                                        String str=Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "RZXT/" + item_no + "/upload/8_" + Upos+".jpg";
                                         Log.i(TAG,"查看str="+str);
                                         GalleryFinal.openEdit(REQUEST_CODE_EDIT, str,mOnHanlderResultCallback);
 
@@ -349,9 +355,16 @@ public class UploadReportActivity extends AppCompatActivity  {
                         @Override
                         public void onClick(int which) {
                             //带配置
-                            String str=Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "RZXT/" + item_no + "/upload/9_" + Upos+".jpg";
+                            String str=Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "rzxt/" + item_no + "/upload/9_" + Upos+".jpg";
                             Log.i(TAG,"查看str="+str);
-                            GalleryFinal.openEdit(REQUEST_CODE_EDIT, str,mOnHanlderResultCallback);
+
+                            File f = new File(str);
+                            if (f.exists()){
+                                GalleryFinal.openEdit(REQUEST_CODE_EDIT, str,mOnHanlderResultCallback);
+                            }
+                          else{
+                                Toast.makeText(UploadReportActivity.this,"照片不存在",Toast.LENGTH_SHORT).show();
+                            }
 
 
                         }
@@ -406,7 +419,7 @@ public class UploadReportActivity extends AppCompatActivity  {
                     //支持断点续传
                     params.setAutoResume(true);
                     params.setMultipart(true);
-//                params.addBodyParameter("FILE", new File(path));
+                params.addBodyParameter("FILE", new File(path));
                     params.addBodyParameter("ITEM_NO", item_no);
                     params.addBodyParameter("APPLY_ID", itemInfos.get(0).getApply_id());
                     params.addBodyParameter("TYPE", mtlInfos.get(imagei).getMtl_type());
@@ -415,22 +428,22 @@ public class UploadReportActivity extends AppCompatActivity  {
 
                         @Override
                         public void onSuccess(String result) {
-                            Log.i(TAG, "result=" + result);
-                            if (result.equals("") || result.equals(null)) {
-                                Uflag = false;
-                            } else {
-                                Gson gson = new Gson();
-                                java.lang.reflect.Type type = new TypeToken<ResultBean>() {
-                                }.getType();
-                                ResultBean Bean = gson.fromJson(result, type);
+                            Gson gson = new Gson();
+                            java.lang.reflect.Type type = new TypeToken<ResultBean>() {
+                            }.getType();
+                            ResultBean Bean = gson.fromJson(result, type);
 //                serverBean = gson.fromJson(result, ServerBean.class);
-                                String err = Bean.getErr();
-                                String msg = Bean.getMsg();
-                                if (err.equals("1") || err.equals("")) {
-                                    Uflag = false;
-                                }
+                            String err = Bean.getErr();
+                            String msg = Bean.getMsg();
+                            if (err.equals("0")) {
 
                             }
+                            else {
+                                Uflag = false;
+                            }
+
+
+
                         }
 
                         @Override
@@ -504,47 +517,57 @@ public class UploadReportActivity extends AppCompatActivity  {
         @Override
         public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
             //查询讯息，确定mtl_name
+if(reqeustCode==REQUEST_CODE_CAMERA||reqeustCode==REQUEST_CODE_GALLERY) {
+    mtl_name = mtl_type + "_" + Upos + ".jpg";
+    //存储图片
+    String path = Environment.getExternalStorageDirectory().getAbsolutePath()
+            + File.separator + "rzxt/" + item_no + "/upload/";
+    if (!FileUtils.isFileExist(path)) {
+        try {
+            File file = FileUtils.createSDDir(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+//            GPSTIMEStr=sharedPrefs.getString("GPSTIMEStr","无信息");
+    Log.i(TAG, "GPSTIMEStr=" + GPSTIMEStr);
+    //获取图片
+    Bitmap Bitmap = BitmapFactory.decodeFile(resultList.get(0).getPhotoPath());
+    //添加水印处理
+    Bitmap textBitmap = ImageUtil.drawTextToRightBottom(UploadReportActivity.this, Bitmap, GPSTIMEStr, 30, Color.WHITE, 16, 16);
 
-            mtl_name=mtl_type+"_"+Upos+".jpg";
-       //存储图片
-            String path= Environment.getExternalStorageDirectory().getAbsolutePath()
-                    + File.separator +"rzxt/"+item_no+"/upload/";
-            if(!FileUtils.isFileExist(path)){
-                try {
-                    File file= FileUtils.createSDDir(path);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            GPSTIMEStr=sharedPrefs.getString("GPSTIMEStr","无信息");
-            Log.i(TAG,"GPSTIMEStr="+GPSTIMEStr);
-            //获取图片
-            Bitmap Bitmap = BitmapFactory.decodeFile(resultList.get(0).getPhotoPath());
-           //添加水印处理
-            Bitmap textBitmap = ImageUtil.drawTextToRightBottom(UploadReportActivity.this, Bitmap, GPSTIMEStr, 30, Color.WHITE, 16, 16);
+    Log.i(TAG, resultList.get(0).getPhotoPath());
+    //把新图片放到指定路径
+    Log.i(TAG, "805 mPhotoname =" + mtl_name);
+    FileUtils.saveBitmap(path, mtl_name, textBitmap);
+    //添加信息到数据库
+    List<MtlInfo> mtlInfos1 = new ArrayList<MtlInfo>();
+    try {
+        mtlInfos1 = db.selector(MtlInfo.class)
+                .where("mtl_name", "=", mtl_name)
+                .findAll();
+    } catch (DbException e) {
+        e.printStackTrace();
+    }
 
-            Log.i(TAG,resultList.get(0).getPhotoPath());
-            //把新图片放到指定路径
-            Log.i(TAG,"805 mPhotoname ="+mtl_name);
-            FileUtils.saveBitmap(path,mtl_name,textBitmap);
-            //添加信息到数据库
-            List<MtlInfo> mtlInfos1 = new ArrayList<MtlInfo>();
-            try {
-                mtlInfos1 = db.selector(MtlInfo.class)
-                        .where("mtl_name","=",mtl_name)
-                        .findAll();
-            } catch (DbException e) {
-                e.printStackTrace();
-            }
-
-            if(mtlInfos1.size()==0) {
-                MtlInfo childInfo = new MtlInfo("",item_no, mtl_type, mtl_name, getBitmapSize(Bitmap), mtl_time, "4", "");
-                try {
-                    db.save(childInfo);
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
-            }
+    if (mtlInfos1.size() == 0) {
+        try {
+            mtlInfos1 = db.selector(MtlInfo.class)
+                    .findAll();
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+        int mtl_no = mtlInfos1.get(mtlInfos1.size() - 1).getMtl_no() + 1;
+        mtl_time = formatter.format(curDate);
+        Log.i(TAG, "mtl_no=" + mtl_no + "item_no=" + item_no + "mtl_type=" + mtl_type + "mtl_name=" + mtl_name);
+        MtlInfo childInfo = new MtlInfo(mtl_no, item_no, mtl_type, mtl_name, getBitmapSize(Bitmap), mtl_time, "4", "");
+        try {
+            db.save(childInfo);
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+    }
+}
             SetGetRListAdapter();
         }
 
@@ -555,10 +578,6 @@ public class UploadReportActivity extends AppCompatActivity  {
     };
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
     /**
      * 得到bitmap的大小
@@ -582,7 +601,85 @@ public class UploadReportActivity extends AppCompatActivity  {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         }
     }
+    public void getGPSTIMEStr() {
+        // -----------location config ------------
+        locationService = ((MyApplication)getApplication()).locationService;
+        //获取locationservice实例，建议应用中只初始化1个location实例，然后使用，可以参考其他示例的activity，都是通过此种方式获取locationservice实例的
+        locationService.registerListener(mListener);
+        //注册监听
+        int type = getIntent().getIntExtra("from", 0);
+        if (type == 0) {
+            locationService.setLocationOption(locationService.getDefaultLocationClientOption());
+        } else if (type == 1) {
+            locationService.setLocationOption(locationService.getOption());
+        }
+        Log.i(TAG, "locationService.start()" );
+        locationService.start();// 定位SDK
+
+    }
+    /*****
+     *
+     * 定位结果回调，重写onReceiveLocation方法，可以直接拷贝如下代码到自己工程中修改
+     *
+     */
+    private BDLocationListener mListener = new BDLocationListener() {
+
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            // TODO Auto-generated method stub
+
+            if (null != location && location.getLocType() != BDLocation.TypeServerError) {
+  GPSTIMEStr=location.getAddrStr()+"\n"+formatter.format(curDate);
+//                SharedPreferences.Editor editor = sharedPrefs.edit();
+//                editor.putString("mLat1", String.valueOf(location.getLatitude()));
+//                editor.putString("mLon1", String.valueOf(location.getLongitude()));
+//                editor.putString("GPSTIMEStr",location.getAddrStr()+formatter.format(curDate));
+//
+//                editor.commit();
 
 
+            }
+        }
 
+        public void onConnectHotSpotMessage(String s, int i){
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        Log.i(TAG,"onStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.i(TAG,"onStop");
+        locationService.unregisterListener(mListener); //注销掉监听
+		locationService.stop(); //停止定位服务
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.i(TAG,"onPause");
+        super.onPause();
+    }
+
+    public UploadReportActivity() {
+        super();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.i(TAG,"onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i(TAG,"onDestroy");
+//        locationService.unregisterListener(mListener); //注销掉监听
+//        locationService.stop(); //停止定位服务
+        super.onDestroy();
+    }
 }

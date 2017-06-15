@@ -46,7 +46,7 @@ public class LoadingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_loading);
         initWindow();
         getPersimmions();
-        SharedPreferences sharedPrefs = getSharedPreferences("RZShare", Context.MODE_PRIVATE);
+        SharedPreferences sharedPrefs = getSharedPreferences("RZ3Share", Context.MODE_PRIVATE);
         String error=sharedPrefs.getString("AUTH_TOKEN", "error");
         Log.i(TAG,"sharedPrefs.getString(AUTH_TOKEN, error)="+sharedPrefs.getString("AUTH_TOKEN", "error"));
        if( sharedPrefs.getString("AUTH_TOKEN", "error").equals("error")||sharedPrefs.getString("AUTH_TOKEN", "error").equals(""))
@@ -94,6 +94,9 @@ public class LoadingActivity extends AppCompatActivity {
             }
             if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
                 permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+            if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                permissions.add(Manifest.permission.CAMERA);
             }
 			/*
 			 * 读写权限和电话状态权限非必要权限(建议授予)只会申请一次，用户同意或者禁止，只会弹一次

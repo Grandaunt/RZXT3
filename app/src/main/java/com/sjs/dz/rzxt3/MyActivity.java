@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -107,6 +109,7 @@ public class MyActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
         //获取侧边栏头部view
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -153,7 +156,7 @@ public class MyActivity extends AppCompatActivity
     private void initData() {
 //        myApplication=new MyApplication();
 //        db = x.getDb(myApplication.getDaoConfig());
-        DbManager db = x.getDb(XDBManager.getDaoConfig());
+         db = x.getDb(XDBManager.getDaoConfig());
         String name=db.getDaoConfig().getDbName().toString();
         Log.i(TAG,"initData.db_addr"+name);
 
@@ -266,6 +269,65 @@ public class MyActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        //toolbar搜索
+        MenuItem searchViewButton = (MenuItem) menu.findItem(R.id.ab_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchViewButton);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.i(TAG,"onQueryTextSubmit"+query);
+                try {
+                    pactInfos.clear();
+                    pactInfos = db.selector(PactInfo.class)
+                            .where("pact_no","%",query)
+                            .and("pact_name","%",query)
+                            .and("pact_start_date","%",query)
+                            .and("pact_end_date","%",query)
+                            .and("pact_com_con_tel","%",query)
+                            .findAll();
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
+
+                if(pactInfos == null || pactInfos.size() == 0){
+
+                }
+                else{
+                    Log.i(TAG,"pactInfos.size"+pactInfos.size());
+                    initFragment(pactInfos);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.i(TAG,"onQueryTextChange"+newText);
+
+                try {
+                    pactInfos.clear();
+                    pactInfos = db.selector(PactInfo.class)
+                            .where("pact_no","%",newText)
+                            .and("pact_name","%",newText)
+                            .and("pact_start_date","%",newText)
+                            .and("pact_end_date","%",newText)
+                            .and("pact_com_con_tel","%",newText)
+                            .findAll();
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
+
+                if(pactInfos == null || pactInfos.size() == 0){
+
+                }
+                else{
+                    Log.i(TAG,"pactInfos.size"+pactInfos.size());
+                    initFragment(pactInfos);
+                }
+
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -294,7 +356,7 @@ public class MyActivity extends AppCompatActivity
             Intent intent = new Intent(MyActivity.this,MenuUploadActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_down) {
-            Intent intent = new Intent(MyActivity.this,DownMaterialActivity.class);
+            Intent intent = new Intent(MyActivity.this,MenuDownMaterialActivity.class);
             intent.putExtra("item_no", "*");
             startActivity(intent);
         } else if (id == R.id.nav_clear) {

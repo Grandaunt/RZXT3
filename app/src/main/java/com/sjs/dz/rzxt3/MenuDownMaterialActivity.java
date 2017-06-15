@@ -415,6 +415,7 @@ public class MenuDownMaterialActivity extends AppCompatActivity {
     private void lookMtl(String Dname,String DdownPath,String format,String item_no) {
         String path= Environment.getExternalStorageDirectory().getAbsolutePath()
                 + File.separator +"RZXT/"+item_no+"/"+"/down/";
+        Log.i(TAG,"path="+path+Dname);
         if(FileUtils.isFileExist(path+Dname)){
            //文件存在，使用本地软件打开
 //            Log.i(TAG,Dname+"文件存在");
@@ -462,7 +463,7 @@ public class MenuDownMaterialActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            downloadFile(URL+"appDownFile",Dname,path,DdownPath,format,item_no);
+            downloadFile(URL,Dname,path,DdownPath,format,item_no);
         }
 //
 
@@ -470,11 +471,11 @@ public class MenuDownMaterialActivity extends AppCompatActivity {
 
     private void downloadFile(String url, final String name, String Filepath, final String downPath, final  String format, final String item_no) {
 
-        RequestParams requestParams = new RequestParams(url);
+        RequestParams requestParams = new RequestParams(url+"appDownFile");
         requestParams.addParameter("FILE_NAME", name);
         requestParams.addParameter("FILE_PATH", downPath);
         requestParams.setSaveFilePath(Filepath+name);
-        Log.i(TAG,"requestParams="+requestParams);
+        Log.i(TAG,"downPath="+downPath);
         Log.i(TAG,"Filepath+name="+Filepath+name);
         x.http().get(requestParams, new Callback.ProgressCallback<File>() {
             @Override

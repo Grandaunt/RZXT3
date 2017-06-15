@@ -90,12 +90,18 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
     private GeoCoder mSearch = null; // 搜索模块，也可去掉地图模块独立使用
     private BaiduMap mBaiduMap = null;
     private MapView mMapView = null;
-    // 天安门坐标
-    double mLat1 = 39.915291;
-    double mLon1 = 116.403857;
+//    // 天安门坐标
+//    double mLat1 = 39.915291;
+//    double mLon1 = 116.403857;
+//    // 百度大厦坐标
+//    double mLat2 = 40.056858;
+//    double mLon2 = 116.308194;
+// 天安门坐标
+    double mLat1 ;
+    double mLon1 ;
     // 百度大厦坐标
-    double mLat2 = 40.056858;
-    double mLon2 = 116.308194;
+    double mLat2 ;
+    double mLon2 ;
     private String ACC,PASSWORD;
     private SharedPreferences sharedPrefs;
     private ServerBean serverBean;
@@ -111,12 +117,14 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG,"onCreate");
         if (getArguments() != null) {
             page = getArguments().getInt(ARG_SECTION_NUMBER);
         }
@@ -129,6 +137,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view, container, false);
+        Log.i(TAG,"onCreateView");
         sharedPrefs = getActivity().getSharedPreferences("RZ3Share", Context.MODE_PRIVATE);
         initViews(view);
         initData();
@@ -138,6 +147,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
     }
     //初始化控件
     private void initViews(View view) {
+        Log.i(TAG,"initViews");
         tv_pact_no= (TextView) view.findViewById(R.id.tv_pact_no);
         tv_pact_start_date= (TextView) view.findViewById(R.id.tv_pact_start_date);
         tv_pact_end_date= (TextView) view.findViewById(R.id.tv_pact_end_date);
@@ -183,6 +193,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
 
     //初始化数据
     private void initData() {
+        Log.i(TAG,"initData");
 //        myApplication=new MyApplication();
          db = x.getDb(XDBManager.getDaoConfig());
         pactInfos = new ArrayList<PactInfo>();
@@ -204,6 +215,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
 
     //控件注入数据
     private void setView() {
+        Log.i(TAG,"setView");
         Log.i(TAG,"page="+page);
         tv_pact_no.setText(pactInfos.get(page).getPact_no());
         tv_pact_start_date.setText(pactInfos.get(page).getPact_start_date());
@@ -221,7 +233,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
          * @param v
          */
         mSearch.geocode(new GeoCodeOption().city(
-                "北京市").address("海淀区上地十街10号"));
+                "北京市").address(tv_addr.getText().toString()));
     }
 
     //动态监听
@@ -376,8 +388,9 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
     //文字信息查找地理位置
     @Override
     public void onGetGeoCodeResult(GeoCodeResult result) {
+        Log.i(TAG,"onGetGeoCodeResult");
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(getActivity(), "抱歉，未能找到结果", Toast.LENGTH_LONG)
+            Toast.makeText(getActivity(), "地理信息错误", Toast.LENGTH_SHORT)
                     .show();
             return;
         }
@@ -428,7 +441,7 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
                 // 构建 导航参数
                 NaviParaOption para = new NaviParaOption()
                         .startPoint(pt1).endPoint(pt2)
-                        .startName("天安门").endName("百度大厦");
+                        .startName("我的位置").endName(tv_addr.getText().toString());
 
                 try {
                     BaiduMapNavigation.openBaiduMapNavi(para, getActivity());
@@ -611,19 +624,28 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
 
     @Override
     public void onResume() {
-        mMapView.onResume();
+        Log.i(TAG," mMapView.onResume();");
+//        mMapView.onResume();
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        mMapView.onPause();
+        Log.i(TAG," mMapView.onResume();");
+//        mMapView.onPause();
         super.onPause();
     }
 
     @Override
+    public void onStop() {
+
+        super.onStop();
+    }
+
+    @Override
     public void onDestroy() {
-        mSearch.destroy();
+        Log.i(TAG," mMapView.onResume();");
+//        mSearch.destroy();
         super.onDestroy();
     }
 }

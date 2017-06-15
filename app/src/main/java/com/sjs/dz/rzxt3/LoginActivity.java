@@ -145,6 +145,7 @@ public class LoginActivity extends AppCompatActivity {
                     itemInfos = serverBean.getXmList();
                     proInfos  = serverBean.getCpList();
                     mtlInfos  = serverBean.getMtList();
+                    Log.i(TAG,"sharedPrefs.getString(AUTH_TOKEN, error)="+sharedPrefs.getString("AUTH_TOKEN", "error"));
                     Log.i(TAG, "pactInfos：" + pactInfos);
                     Log.i(TAG, "mtInfos：" + mtlInfos);
                     Log.i(TAG, "proInfos：" + proInfos);

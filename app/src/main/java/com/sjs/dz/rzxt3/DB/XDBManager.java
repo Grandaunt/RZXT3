@@ -22,7 +22,7 @@ public class XDBManager {
                 //设置数据库路径，默认存储在app的私有目录/mnt/sdcard/
                 .setDbDir(new File("/mnt/sdcard/rzxt"))
                 //设置数据库的版本号
-                .setDbVersion(2);
+                .setDbVersion(1);
         return daoConfig;
     }
     /**

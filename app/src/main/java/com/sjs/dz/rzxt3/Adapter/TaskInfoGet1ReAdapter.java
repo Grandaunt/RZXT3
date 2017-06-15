@@ -49,6 +49,7 @@ public class TaskInfoGet1ReAdapter extends RecyclerView.Adapter<TaskInfoGet1ReAd
 //        MyApplication myApplication=new MyApplication();
         DbManager db = x.getDb(XDBManager.getDaoConfig());
         mtlInfos = new ArrayList<MtlInfo>();
+        Log.i(TAG,"TaskInfoGet1ReAdapter:item_no"+item_no);
         try {
             mtlInfos = db.selector(MtlInfo.class)
                     .where("item_no","=",item_no)

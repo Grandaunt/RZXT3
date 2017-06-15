@@ -2,10 +2,13 @@
 <resources>
     <color name="colorPrimary">#fff</color>
     <color name="colorPrimaryDark">#777</color>
-    <color name="colorAccent">#7FBA00</color>
+    <color name="colorAccent">#43bc53</color>
+
+    <!--<color name="colorAccent">#7FBA00</color>-->
 
 
     <color name="white">#FFF</color>
+    <color name="white2">#FFe</color>
     <color name="graye">#eee</color>
     <color name="grayd">#ddd</color>
     <color name="grayc">#ccc</color>
@@ -26,12 +29,14 @@
     <color name="greene">#a4e2c6</color>
     <color name="greend">#7fecad</color>
     <color name="greenc">#7bcfa6</color>
-    <color name="greenb">#3de1ad</color>
+    <color name="greenb">#42bb52</color>
     <color name="greena">#33FF99</color>
     <color name="green9">#00FF99</color>
     <color name="green8">#66FFCC</color>
     <color name="green7">#7FDC00</color>
     <color name="green6">#AFFE00</color>
+    <color name="green5">#c3eae3</color>
+    <color name="green4">#c8d4c8</color>
 
     <color name="DarkOrange">#FF8C00</color>
     <color name="Orange">#FFA500</color>

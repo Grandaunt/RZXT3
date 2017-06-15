@@ -477,7 +477,7 @@ public class DownMaterialActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            downloadFile(URL+"appDownFile",Dname,path,DdownPath,format);
+            downloadFile(URL,Dname,path,DdownPath,format);
         }
 //
 
@@ -485,7 +485,7 @@ public class DownMaterialActivity extends AppCompatActivity {
 
     private void downloadFile(String url, final String name, String Filepath, final String downPath,final  String format) {
 
-        RequestParams requestParams = new RequestParams(url);
+        RequestParams requestParams = new RequestParams(url+"appDownFile");
         requestParams.addParameter("FILE_NAME", name);
         requestParams.addParameter("FILE_PATH", downPath);
         requestParams.setSaveFilePath(Filepath+name);
