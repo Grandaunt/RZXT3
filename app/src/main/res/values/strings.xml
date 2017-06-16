@@ -38,7 +38,7 @@
     <string name="info_get3">已有检测报告</string>
     <string name="info_memo">备注</string>
     <string name="save">上 传</string>
-    <string name="con">联系人:</string>
+    <string name="con">联系人 ：</string>
     <string name="about_main_text">
              中华全国供销合作总社北京商业机械研究所于1978年经国务院国科发字［1978］356号文批准成立，位于北京市丰台区总部基地，是直属于中华全国供销合作总社的国家级科研院所，下属单位有北京中合金诺认证中心有限公司和北京中合智盛有限公司。
         北京商业机械研究所围绕“农产品标准化”和“农产品信息追溯”应用中的关键性技术问题，致力于开发一套符合农产品标准与信息查询服务的系统平台，以信息化与互联网技术推动供销合作社传统业务的“智慧化”升级,
@@ -46,12 +46,12 @@
 
     </string>
 
-    <string name="about_com_addr">地址:</string>
-    <string name="about_com_tel">联系电话:</string>
-    <string name="about_com_phone">手机:</string>
-    <string name="about_item_web_url">项目网址:</string>
-    <string name="about_wechar">微信公众号:</string>
-    <string name="about_email">邮箱:</string>
+    <string name="about_com_addr">地址 ：</string>
+    <string name="about_com_tel">电话 ：</string>
+    <string name="about_com_phone">手机 ：</string>
+    <string name="about_item_web_url">项目网址 ：</string>
+    <string name="about_wechar">微信公众号 ：</string>
+    <string name="about_email">邮箱 ：</string>
 
     <string name="about_com_name_info">中华全国供销合作社北京商业机械研究所</string>
     <string name="about_com_addr_info">北京市丰台区南四环西路188号十六区3号楼</string>
@@ -116,6 +116,8 @@
     <string name="com_con_tel">182573016283</string>
     <string name="com_con_ide">经理</string>
     <string name="date_biao">-</string>
+
+
 
     <string name="item_about">项目介绍</string>
     <string name="item_no">项目编号</string>

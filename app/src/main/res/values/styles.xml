@@ -9,9 +9,10 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
+    <style name="AppTheme" parent="AppTheme.Base">
+    </style>
     <style name="AppTheme.NoActionBar">
-        <item name="windowTranslucentStatus">true</item>
+
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorPrimary">@color/colorPrimaryDark</item>
@@ -67,5 +68,22 @@
     <style name="ActionSheetDialogAnimation" parent="@android:style/Animation.Dialog">
         <item name="android:windowEnterAnimation">@anim/actionsheet_dialog_in</item>
         <item name="android:windowExitAnimation">@anim/actionsheet_dialog_out</item>
+    </style>
+<!--圆角-->
+    <style name="rectangle_btn_acc">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:background">@drawable/re_btn_acc</item>
+    </style>
+    <style name="rectangle_ly">
+            <item name="android:background">@drawable/re_ly</item>
+
+    </style>
+    <style name="rectangle_main">
+        <item name="android:background">@drawable/re_main</item>
+
     </style>
 </resources>

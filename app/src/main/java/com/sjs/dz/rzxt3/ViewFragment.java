@@ -158,12 +158,12 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
         tv_com_con_tel= (TextView) view.findViewById(R.id.tv_com_con_tel);
         bt_upload=(Button)view.findViewById(R.id.btn_upload) ;
         tv_addr= (TextView) view.findViewById(R.id.tv_com_addr);
-        im_addr=(ImageView) view.findViewById(R.id.im_com_addr);
-
-        im_message=(ImageView)view.findViewById(R.id.im_con_con_tel_dx);
-        im_tel=(ImageView) view.findViewById(R.id.im_con_con_tel);
-        onclick1=(TextView) view.findViewById(R.id.onclick1);
-        onclick2=(TextView) view.findViewById(R.id.onclick2);
+//        im_addr=(ImageView) view.findViewById(R.id.im_com_addr);
+//
+//        im_message=(ImageView)view.findViewById(R.id.im_con_con_tel_dx);
+//        im_tel=(ImageView) view.findViewById(R.id.im_con_con_tel);
+//        onclick1=(TextView) view.findViewById(R.id.onclick1);
+//        onclick2=(TextView) view.findViewById(R.id.onclick2);
 
         // 地图初始化
         mMapView = (MapView) view.findViewById(R.id.bmapView);
@@ -175,11 +175,11 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
 
         bt_upload.setOnClickListener(this);
         tv_addr.setOnClickListener(this);
-        im_addr.setOnClickListener(this);
+//        im_addr.setOnClickListener(this);
         tv_com_con_tel.setOnClickListener(this);
-        im_tel.setOnClickListener(this);
+//        im_tel.setOnClickListener(this);
 
-        im_message.setOnClickListener(this);
+//        im_message.setOnClickListener(this);
         tv_pact_no.setOnClickListener(this);
         tv_pact_start_date.setOnClickListener(this);
         tv_pact_end_date.setOnClickListener(this);
@@ -187,8 +187,8 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
 
         tv_com_con_ide.setOnClickListener(this);
         tv_com_name.setOnClickListener(this);
-        onclick1.setOnClickListener(this);
-        onclick2.setOnClickListener(this);
+//        onclick1.setOnClickListener(this);
+//        onclick2.setOnClickListener(this);
     }
 
     //初始化数据
@@ -248,22 +248,22 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
                 Log.i(TAG,"onClick.tv_com_addr");
                 startNavi();
                 break;
-            case  R.id.im_com_addr:
-                Log.i(TAG,"onClick.im_com_addr");
-                startNavi();
-                break;
-            case R.id.tv_com_con_tel:
-                Log.i(TAG,"onClick.tv_com_con_tel");
-                cellTel();
-                break;
-            case R.id.im_con_con_tel:
-                Log.i(TAG,"onClick.im_con_con_tel");
-                cellTel();
-                break;
-            case R.id.im_con_con_tel_dx:
-                Log.i(TAG,"onClick.im_con_con_tel");
-                cellMessage();
-                break;
+//            case  R.id.im_com_addr:
+//                Log.i(TAG,"onClick.im_com_addr");
+//                startNavi();
+//                break;
+//            case R.id.tv_com_con_tel:
+//                Log.i(TAG,"onClick.tv_com_con_tel");
+//                cellTel();
+//                break;
+//            case R.id.im_con_con_tel:
+//                Log.i(TAG,"onClick.im_con_con_tel");
+//                cellTel();
+//                break;
+//            case R.id.im_con_con_tel_dx:
+//                Log.i(TAG,"onClick.im_con_con_tel");
+//                cellMessage();
+//                break;
             case R.id.tv_pact_no:
                 Log.i(TAG,"onClick.tv_pact_no");
                 onclickItem();
@@ -288,14 +288,14 @@ public class ViewFragment extends Fragment implements OnGetGeoCoderResultListene
                 Log.i(TAG,"onClick.tv_pact_end_date");
                 onclickItem();
                 break;
-            case R.id.onclick1:
-                Log.i(TAG,"onClick.onclick1");
-                onclickItem();
-                break;
-            case R.id.onclick2:
-                Log.i(TAG,"onClick.onclick2");
-                onclickItem();
-                break;
+//            case R.id.onclick1:
+//                Log.i(TAG,"onClick.onclick1");
+//                onclickItem();
+//                break;
+//            case R.id.onclick2:
+//                Log.i(TAG,"onClick.onclick2");
+//                onclickItem();
+//                break;
 
             default:
                 break;

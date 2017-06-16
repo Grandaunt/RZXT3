@@ -2,65 +2,83 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:padding="20dp"
-    android:layout_marginTop="10dp"
+    android:background="@color/graye"
+    android:paddingTop="20dp"
     android:descendantFocusability="blocksDescendants"
+
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/greenf"
-        android:orientation="vertical">
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:padding="14dp"
+        >
+
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:background="@color/white"-->
+            <!--android:text="@string/item_about"-->
+            <!--android:textSize="18dp" />-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/graya"
+            android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_item_no"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="match_parent"
             android:background="@color/white"
-            android:text="@string/item_about"
-            android:textSize="18dp" />
+            android:text="@string/item_no"
+            android:textColor="@color/greenf"
+            android:textSize="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="0.5dp"
             android:background="@color/white"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:orientation="horizontal">
+                android:orientation="horizontal"   android:paddingTop="8dp"
+                android:paddingBottom="8dp">
 
                 <TextView
-                    android:id="@+id/tv_item_no"
+                    android:id="@+id/tv_item_pro_type"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="@string/item_no"
-                    android:textColor="@color/greenf" />
+                    android:text="@string/pro_type"
+                    android:textSize="16dp"/>
 
                 <TextView
                     android:id="@+id/tv_item_status"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="@string/item_status"
-                    android:textColor="@color/DarkOrange" />
+                    android:textColor="@color/DarkOrange"
+                    android:textSize="16dp"/>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_item_pro_type"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:text="@string/pro_type" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:id="@+id/tv_item_rz_scope"
@@ -68,10 +86,11 @@
                     android:layout_height="match_parent"
                     android:text="@string/rz_scope" />
 
+
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@mipmap/ic_shu_greenf" />
+                    android:src="@mipmap/ic_shu_gray" />
 
                 <TextView
                     android:id="@+id/tv_item_rz_type"
@@ -82,7 +101,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@mipmap/ic_shu_greenf" />
+                    android:src="@mipmap/ic_shu_gray" />
 
                 <TextView
                     android:id="@+id/tv_item_check_type"
@@ -93,11 +112,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/greenf"
-            android:orientation="vertical">
+
 
             <LinearLayout
                 android:id="@+id/ly_item_pro_info"
@@ -111,10 +126,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/pro_info" />
+                    android:text="@string/pro_info"
+                    />
 
                 <ImageView
-                    android:layout_width="20dp"
+                    android:layout_width="10dp"
                     android:layout_height="30dp"
                     android:src="@mipmap/ic_right" />
             </LinearLayout>
@@ -131,10 +147,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/item_material" />
+                    android:text="@string/item_material"
+                    />
 
                 <ImageView
-                    android:layout_width="20dp"
+                    android:layout_width="10dp"
                     android:layout_height="30dp"
                     android:src="@mipmap/ic_right" />
             </LinearLayout>
@@ -151,10 +168,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/item_report" />
+                    android:text="@string/item_report"
+                   />
 
                 <ImageView
-                    android:layout_width="20dp"
+                    android:layout_width="10dp"
                     android:layout_height="30dp"
                     android:src="@mipmap/ic_right" />
             </LinearLayout>

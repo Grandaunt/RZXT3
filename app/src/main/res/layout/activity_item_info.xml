@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/graye"
-    tools:context="com.sjs.dz.rzxt3.ProInfoActivity">
+    android:fitsSystemWindows="true"
+    tools:context="com.sjs.dz.rzxt3.ItemActivity">
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,34 +15,33 @@
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="8dp">
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_pro"
+            android:id="@+id/toolbar_item"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="60dp"
             android:background="@color/white"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             android:weightSum="1">
             <ImageView
-                android:id="@+id/im_pro_back"
+                android:id="@+id/im_item_back"
                 android:layout_width="45dp"
                 android:layout_height="wrap_content"
                 android:paddingTop="23dp"
                 android:paddingRight="23dp"
                 android:src="@mipmap/ic_back_green"
-                />
+               />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:textSize="18sp"
-                android:paddingLeft="90dp"
+                android:paddingLeft="80dp"
                 android:paddingTop="23dp"
                 android:textColor="@color/black"
-                android:text="@string/tab3"/>
+                android:text="@string/tab1"/>
         </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+</android.support.design.widget.AppBarLayout>
     <ListView
-        android:id="@+id/pro_info_listview"
+        android:id="@+id/item_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+       />
 </LinearLayout>

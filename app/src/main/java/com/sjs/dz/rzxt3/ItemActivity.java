@@ -1,9 +1,7 @@
 package com.sjs.dz.rzxt3;
 
 import android.annotation.TargetApi;
-import android.app.ListActivity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,14 +12,11 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.sjs.dz.rzxt3.DB.ItemInfo;
-import com.sjs.dz.rzxt3.DB.PactInfo;
 import com.sjs.dz.rzxt3.DB.XDBManager;
-import com.sjs.dz.rzxt3.base.MyApplication;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
@@ -41,7 +36,7 @@ public class ItemActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item);
+        setContentView(R.layout.activity_item_info);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_item);
         toolbar.setTitle("");//设置主标题
         setSupportActionBar(toolbar);

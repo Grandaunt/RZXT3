@@ -33,8 +33,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="65dp"
-            android:background="@color/green4"
-            android:orientation="horizontal">
+
+            android:orientation="horizontal"
+            style="@style/rectangle_ly">
 
             <ImageView
                 android:layout_width="25dp"
@@ -46,19 +47,18 @@
                 android:id="@+id/et_acc"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/green4"
+                android:background="@null"
                 android:hint="@string/Input_useracc"
-
                 android:paddingLeft="8dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white2" />
         </LinearLayout>
 
         <LinearLayout
+            style="@style/rectangle_ly"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            android:background="@color/green4"
             android:orientation="horizontal">
 
             <ImageView
@@ -71,11 +71,11 @@
                 android:id="@+id/et_password"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/green4"
                 android:hint="@string/Input_password"
                 android:inputType="textPassword"
                 android:paddingLeft="8dp"
                 android:textColor="@color/white"
+                android:background="@null"
                 android:textColorHint="@color/white2"
 
                 />
@@ -121,13 +121,11 @@
 
         <Button
             android:id="@+id/btn_login"
+            style="@style/rectangle_btn_acc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="45dp"
-            android:background="@color/greenb"
             android:text="@string/login"
-            android:textColor="@color/white"
-            android:textSize="24dp"
-            android:textStyle="bold" />
+       />
     </LinearLayout>
 </LinearLayout>

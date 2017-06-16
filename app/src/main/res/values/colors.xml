@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#fff</color>
-    <color name="colorPrimaryDark">#777</color>
+    <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#43bc53</color>
 
     <!--<color name="colorAccent">#7FBA00</color>-->
@@ -25,13 +25,13 @@
     <color name="gray1">#111</color>
     <color name="black">#000</color>
 
-    <color name="greenf">#c0ebd7</color>
+    <color name="greenf">#43bc53</color>
     <color name="greene">#a4e2c6</color>
     <color name="greend">#7fecad</color>
     <color name="greenc">#7bcfa6</color>
     <color name="greenb">#42bb52</color>
-    <color name="greena">#33FF99</color>
-    <color name="green9">#00FF99</color>
+    <color name="greena">#c0ebd7</color>
+    <color name="green9">#c0ebd7</color>
     <color name="green8">#66FFCC</color>
     <color name="green7">#7FDC00</color>
     <color name="green6">#AFFE00</color>

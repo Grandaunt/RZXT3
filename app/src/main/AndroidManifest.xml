@@ -106,8 +106,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
          <activity
          android:name=".MyActivity"
-         android:label="@string/title_activity_pact"
-         android:theme="@style/AppTheme.NoActionBar">
+         android:label="@string/title_activity_pact">
          </activity>
         <activity
             android:name=".ItemActivity"

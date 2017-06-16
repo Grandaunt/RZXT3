@@ -51,24 +51,14 @@ public class LoginActivity extends AppCompatActivity {
     private String ACC,PASSWORD;
 //    public static String URL="http://123.57.29.113:8080/MVNFHM/appInterface/";
     public static String URL="http://172.16.10.242:8080/bcm_rz/appInterface/";
-
 //            "http://172.16.10.242:8080/bcm_rz/appInterface/appLogin";
     private SharedPreferences sharedPrefs;
-    private Button ll_update;
-    private ProgressDialog pDialog;
-    private String nowVersion;
-    private ProgressDialog progressDialog;
-    private MyApplication myApplication;
     private  DbManager db;
     private ServerBean serverBean;
     private final int SDK_PERMISSION_REQUEST = 127;
     private String permissionInfo;
-    @ViewInject(R.id.et_acc)
-    EditText et_Acc;
-    @ViewInject(R.id.et_password)
-    EditText et_Password;
-    @ViewInject(R.id.btn_login)
-    EditText btn_Login;
+    EditText et_Acc, et_Password;
+    Button btn_Login;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -78,16 +68,18 @@ public class LoginActivity extends AppCompatActivity {
         initWindow();
         x.view().inject(this);
         sharedPrefs = getSharedPreferences("RZ3Share", Context.MODE_PRIVATE);
-
+        et_Acc=(EditText)findViewById(R.id.et_acc);
+        et_Password=(EditText)findViewById(R.id.et_password);
+        btn_Login=(Button)findViewById(R.id.btn_login);
 //        myApplication=new MyApplication();
         XDBManager.initDb();
          db = x.getDb(XDBManager.getDaoConfig());
         String name=db.getDaoConfig().getDbName().toString();
         Log.i(TAG,"initData.db_addr"+name);
-
         getPersimmions();
 
     }
+
     /**
      * 单击事件
      * type默认View.OnClickListener.class，故此处可以简化不写，@Event(R.id.bt_main)
